@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Entity, SchedulesResponse } from '../models/schedule.model';
+import { BehaviorSubject, filter, Observable, switchMap } from 'rxjs';
+import { Entity, ScheduleResponse, SchedulesResponse } from '../models/schedule.model';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -17,6 +17,10 @@ export class SchedulesService {
   private selectedScheduleSubject: BehaviorSubject<Entity | null>;
   public selectedSchedule$: Observable<Entity | null>;
 
+  // Handles schedule data.
+  private scheduleDataSubject = new BehaviorSubject<ScheduleResponse | null>(null);
+  public scheduleData$ = this.scheduleDataSubject.asObservable();
+
   constructor(
     private readonly http: HttpClient,
     private readonly storageService: StorageService
@@ -25,6 +29,17 @@ export class SchedulesService {
     const storedSchedule = this.storageService.getSessionItem<Entity>('selectedSchedule');
     this.selectedScheduleSubject = new BehaviorSubject<Entity | null>(storedSchedule);
     this.selectedSchedule$ = this.selectedScheduleSubject.asObservable();
+
+    // Trigger API call whenever selectedSchedule changes (and is not null)
+    this.selectedSchedule$
+      .pipe(
+        filter((schedule): schedule is Entity => schedule !== null),
+        switchMap((schedule) => this.http.get<ScheduleResponse>(`/schedules/${schedule.id}`))
+      )
+      .subscribe((scheduleData) => {
+        console.log('Fetched schedule data:', scheduleData);
+        this.scheduleDataSubject.next(scheduleData);
+      });
   }
 
   /**
