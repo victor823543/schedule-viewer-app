@@ -27,6 +27,7 @@ export class ScheduleSelectComponent implements OnInit {
     this.schedulesService.selectedSchedule$.subscribe((schedule) => {
       this.selectedSchedule = schedule;
     });
+    console.log('Selected schedule:', this.selectedSchedule);
   }
 
   onScheduleSelect(scheduleId: string): void {
