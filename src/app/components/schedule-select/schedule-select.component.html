@@ -1,0 +1,8 @@
+<mat-form-field>
+  <mat-label>Schedule</mat-label>
+  <mat-select (selectionChange)="onScheduleSelect($event.value)">
+    <mat-option *ngFor="let schedule of schedules$ | async" [value]="schedule.id">{{
+      schedule.displayName
+    }}</mat-option>
+  </mat-select>
+</mat-form-field>

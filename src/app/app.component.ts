@@ -1,9 +1,9 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { CalendarComponent, CalendarEvent } from './calendar/calendar.component';
-import { SchedulesService } from './services/schedules.service';
+import { CalendarComponent, CalendarEvent } from './components/calendar/calendar.component';
+import { ScheduleSelectComponent } from './components/schedule-select/schedule-select.component';
 
 const dummyWeeks: string[] = ['2024-11-18', '2024-11-25', '2024-12-02'];
 
@@ -42,23 +42,20 @@ const dummyEvents: CalendarEvent[] = [
 
 @Component({
   selector: 'app-root',
-  imports: [MatToolbarModule, MatFormFieldModule, MatSelectModule, CalendarComponent],
+  imports: [
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    CalendarComponent,
+    ScheduleSelectComponent
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   // some dummy calendar data
   protected readonly weeks = signal<string[]>(dummyWeeks);
   protected readonly events = signal<CalendarEvent[]>(dummyEvents);
-
-  constructor(private schedulesService: SchedulesService) {}
-
-  // Console log the schedules when the component is initialized
-  ngOnInit() {
-    this.schedulesService.getSchedules().subscribe((schedules) => {
-      console.log(schedules);
-    });
-  }
 
   // the selected week
   protected readonly selectedWeek = signal<string | null>(null);
