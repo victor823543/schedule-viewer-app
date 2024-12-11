@@ -4,17 +4,15 @@ import { CalendarOptions } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
 
 export type CalendarEvent = {
-  title:  string;
-  start:  string;
-  end:    string;
+  title: string;
+  start: string;
+  end: string;
   color?: string;
 };
 
 @Component({
   selector: 'app-calendar',
-  imports: [
-    FullCalendarModule
-  ],
+  imports: [FullCalendarModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss'
 })
@@ -24,12 +22,12 @@ export class CalendarComponent {
 
   // input parameters to be passed using the component's selector
   public readonly initialDate = input.required<string | null>();
-  public readonly events      = input.required<CalendarEvent[]>();
+  public readonly events = input.required<CalendarEvent[]>();
 
   // static calendar options
   protected readonly calendarOptions: CalendarOptions = {
     // the calendar view to be used
-    plugins: [ timeGridPlugin ],
+    plugins: [timeGridPlugin],
     initialView: 'timeGridWeek',
 
     // some customizations
@@ -56,11 +54,11 @@ export class CalendarComponent {
     timeZone: 'local'
   };
 
-  constructor () {
+  constructor() {
     // update the calendar's chosen week
     effect(() => {
       const initialDate = this.initialDate();
-      if ( ! initialDate) return;
+      if (!initialDate) return;
       this._fullCalendar()?.getApi().gotoDate(initialDate);
     });
   }

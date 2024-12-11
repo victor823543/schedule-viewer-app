@@ -52,5 +52,19 @@ export class FilterService {
     this.filters.week.next(week);
   }
 
-  constructor() {}
+  // Function to get filter values prepared for fetching data
+  getActiveFilters(): { [key: string]: string | null } {
+    const activeFilters: { [key: string]: string | null } = {};
+    if (this.filters.teacher.value.active && this.filters.teacher.value.value) {
+      activeFilters['teachers'] = this.filters.teacher.value.value.id;
+    }
+    if (this.filters.group.value.active && this.filters.group.value.value) {
+      activeFilters['groups'] = this.filters.group.value.value.id;
+    }
+    if (this.filters.location.value.active && this.filters.location.value.value) {
+      activeFilters['inLocations'] = this.filters.location.value.value.id;
+    }
+    activeFilters['week'] = this.filters.week.value;
+    return activeFilters;
+  }
 }
