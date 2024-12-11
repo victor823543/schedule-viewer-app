@@ -11,5 +11,7 @@
   <app-schedule-select></app-schedule-select>
 </mat-toolbar>
 
+<app-filter></app-filter>
+
 <!-- instantiates an instance of our calendar component and passes some input data -->
 <app-calendar [initialDate]="selectedWeek()" [events]="events()"></app-calendar>

@@ -3,6 +3,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CalendarComponent, CalendarEvent } from './components/calendar/calendar.component';
+import { FilterComponent } from './components/filter/filter.component';
 import { ScheduleSelectComponent } from './components/schedule-select/schedule-select.component';
 
 const dummyWeeks: string[] = ['2024-11-18', '2024-11-25', '2024-12-02'];
@@ -47,7 +48,8 @@ const dummyEvents: CalendarEvent[] = [
     MatFormFieldModule,
     MatSelectModule,
     CalendarComponent,
-    ScheduleSelectComponent
+    ScheduleSelectComponent,
+    FilterComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

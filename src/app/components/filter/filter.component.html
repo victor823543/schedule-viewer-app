@@ -1,0 +1,57 @@
+<div class="example-action-buttons">
+  <button mat-button (click)="accordion().openAll()">Expand All</button>
+  <button mat-button (click)="accordion().closeAll()">Collapse All</button>
+</div>
+<mat-accordion class="example-headers-align" multi>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Teachers </mat-panel-title>
+      <mat-panel-description>
+        Select the teacher
+        <mat-icon>account_circle</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-selection-list #teachers [multiple]="false" class="selection-list">
+      <mat-list-option
+        *ngFor="let teacher of teachers$ | async"
+        [value]="teacher.id"
+        (selectedChange)="onTeacherSelect(teacher)"
+        >{{ teacher.displayName }}</mat-list-option
+      >
+    </mat-selection-list>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Groups </mat-panel-title>
+      <mat-panel-description>
+        Select the group
+        <mat-icon>map</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-selection-list #groups [multiple]="false" class="selection-list">
+      <mat-list-option
+        *ngFor="let group of groups$ | async"
+        [value]="group.id"
+        (selectedChange)="onGroupSelect(group)"
+        >{{ group.displayName }}</mat-list-option
+      >
+    </mat-selection-list>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Locations </mat-panel-title>
+      <mat-panel-description>
+        Select the location
+        <mat-icon>date_range</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-selection-list #locations [multiple]="false" class="selection-list">
+      <mat-list-option
+        *ngFor="let location of locations$ | async"
+        [value]="location.id"
+        (selectedChange)="onLocationSelect(location)"
+        >{{ location.displayName }}</mat-list-option
+      >
+    </mat-selection-list>
+  </mat-expansion-panel>
+</mat-accordion>
