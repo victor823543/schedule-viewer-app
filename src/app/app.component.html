@@ -1,17 +1,9 @@
-<mat-toolbar>
-  <mat-form-field>
-    <mat-label>Vecka</mat-label>
-    <!-- [(...)] is a two-way binding syntax in Angular whereas [...] is a one-way binding and (...) is an event binding -->
-    <mat-select [(value)]="selectedWeek">
-      @for (week of weeks(); track $index) {
-        <mat-option [value]="week">{{ week }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+<mat-toolbar class="toolbar">
+  <app-date-picker view="day"></app-date-picker>
   <app-schedule-select></app-schedule-select>
 </mat-toolbar>
 
 <app-filter></app-filter>
 
 <!-- instantiates an instance of our calendar component and passes some input data -->
-<app-calendar [initialDate]="selectedWeek()" [events]="events()"></app-calendar>
+<app-calendar [events]="events()"></app-calendar>

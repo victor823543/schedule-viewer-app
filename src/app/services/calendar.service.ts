@@ -19,7 +19,7 @@ import { SchedulesService } from './schedules.service';
 })
 export class CalendarService {
   private calendarEventsSubject = new BehaviorSubject<any[]>([]);
-  public calendarEvents$ = this.calendarEventsSubject.asObservable();
+  public calendarEvents$: Observable<Event[]> = this.calendarEventsSubject.asObservable();
 
   constructor(
     private readonly http: HttpClient,

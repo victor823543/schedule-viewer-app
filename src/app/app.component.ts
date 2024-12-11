@@ -4,11 +4,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { map } from 'rxjs';
 import { CalendarComponent, CalendarEvent } from './components/calendar/calendar.component';
+import { DatePickerComponent } from './components/date-picker/date-picker.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { ScheduleSelectComponent } from './components/schedule-select/schedule-select.component';
 import { CalendarService } from './services/calendar.service';
-
-const dummyWeeks: string[] = ['2024-11-18', '2024-11-25', '2024-12-02'];
 
 @Component({
   selector: 'app-root',
@@ -18,14 +17,14 @@ const dummyWeeks: string[] = ['2024-11-18', '2024-11-25', '2024-12-02'];
     MatSelectModule,
     CalendarComponent,
     ScheduleSelectComponent,
-    FilterComponent
+    FilterComponent,
+    DatePickerComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   // some dummy calendar data
-  protected readonly weeks = signal<string[]>(dummyWeeks);
   protected readonly events = signal<CalendarEvent[]>([]);
 
   // the selected week
@@ -38,7 +37,7 @@ export class AppComponent implements OnInit {
       .pipe(
         map((events) =>
           events.map((event) => ({
-            title: event.title,
+            title: event.course?.displayName || event.type || '',
             start: event.start,
             end: event.end,
             color: event.color

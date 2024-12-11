@@ -2,6 +2,7 @@ import { Component, effect, input, viewChild } from '@angular/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import { DateService } from '../../services/date.service';
 
 export type CalendarEvent = {
   title: string;
@@ -21,7 +22,6 @@ export class CalendarComponent {
   private readonly _fullCalendar = viewChild(FullCalendarComponent);
 
   // input parameters to be passed using the component's selector
-  public readonly initialDate = input.required<string | null>();
   public readonly events = input.required<CalendarEvent[]>();
 
   // static calendar options
@@ -54,10 +54,10 @@ export class CalendarComponent {
     timeZone: 'local'
   };
 
-  constructor() {
+  constructor(private dateService: DateService) {
     // update the calendar's chosen week
     effect(() => {
-      const initialDate = this.initialDate();
+      const initialDate = this.dateService.selectedDay();
       if (!initialDate) return;
       this._fullCalendar()?.getApi().gotoDate(initialDate);
     });
