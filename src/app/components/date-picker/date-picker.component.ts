@@ -1,23 +1,24 @@
 import { Component, input, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCalendar } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { getISOWeek } from 'date-fns';
 import { DateService } from '../../services/date.service';
+import { CalendarSelectComponent } from '../calendar-select/calendar-select.component';
 
 @Component({
   selector: 'app-date-picker',
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.scss'],
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, MatCalendar]
+  imports: [MatButtonModule, MatIconModule, MatMenuModule, CalendarSelectComponent]
 })
 export class DatePickerComponent implements OnInit {
   @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
 
   view = input<'day' | 'week'>('week');
 
-  selectedDate!: string; // Holds the selected date in YYYY-MM-DD format
+  selectedDate!: Date; // Holds the selected date
+  selectedDateFormatted!: string; // Holds the selected date in YYYY-MM-DD format
   displayValue!: string; // Holds the value to be displayed based on the view
 
   constructor(public dateService: DateService) {}
@@ -29,7 +30,8 @@ export class DatePickerComponent implements OnInit {
   // Updates the displayed value based on the current view (day or week).
   updateDisplayValue(): void {
     const currentDate = this.dateService.selectedDay();
-    this.selectedDate = currentDate;
+    this.selectedDateFormatted = currentDate;
+    this.selectedDate = new Date(currentDate);
 
     if (this.view() === 'week') {
       const weekNumber = getISOWeek(new Date(currentDate));

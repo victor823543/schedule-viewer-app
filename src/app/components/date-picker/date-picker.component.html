@@ -12,6 +12,10 @@
   </button>
 
   <mat-menu #menu="matMenu">
-    <mat-calendar (selectedChange)="onSelectDate($event)"></mat-calendar>
+    <app-calendar-select
+      [selectedDate]="selectedDate"
+      (dateSelected)="onSelectDate($event)"
+      [view]="view()"
+    ></app-calendar-select>
   </mat-menu>
 </div>

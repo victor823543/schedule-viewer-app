@@ -19,6 +19,16 @@ html {
   );
 }
 
+:root {
+  @include mat.menu-overrides(
+    (
+      container-elevation-shadow: none,
+      container-color: transparent,
+      container-shape: 0.75rem
+    )
+  );
+}
+
 body {
   margin: 0;
   padding: 0.75rem;

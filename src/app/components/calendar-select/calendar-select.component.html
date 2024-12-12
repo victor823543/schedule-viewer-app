@@ -1,0 +1,59 @@
+<div class="week-selector">
+  <!-- Header for navigation -->
+  <div class="header">
+    <button mat-icon-button (click)="previousMonth(); $event.stopPropagation()">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <span>{{ currentMonth | date: 'MMM yyyy' }}</span>
+    <button mat-icon-button (click)="nextMonth(); $event.stopPropagation()">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- Calendar grid -->
+  <div class="calendar">
+    <!-- Weekday labels -->
+    <div class="calendar-header">
+      <div *ngFor="let day of ['M', 'T', 'W', 'T', 'F', 'S', 'S']" class="day-header">
+        {{ day }}
+      </div>
+    </div>
+
+    <!-- Week view -->
+    <div *ngIf="view() === 'week'" class="calendar-body">
+      <div
+        class="week-row week-view"
+        *ngFor="let week of getWeeksInMonth()"
+        [class.selected]="isDayInSelectedWeek(week[0])"
+        (click)="selectDate(week[0])"
+      >
+        <div
+          *ngFor="
+            let day of daysInMonth
+              | slice: daysInMonth.indexOf(week[0]) : daysInMonth.indexOf(week[0]) + 7
+          "
+          class="day-cell"
+        >
+          {{ day.getDate() }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Day view -->
+    <div *ngIf="view() === 'day'" class="calendar-body">
+      <div class="week-row" *ngFor="let week of getWeeksInMonth()">
+        <div
+          *ngFor="
+            let day of daysInMonth
+              | slice: daysInMonth.indexOf(week[0]) : daysInMonth.indexOf(week[0]) + 7
+          "
+          class="day-cell day-view"
+          [class.selected]="isDaySelected(day)"
+          (click)="selectDate(day)"
+        >
+          {{ day.getDate() }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
