@@ -1,1 +1,85 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: mat.$blue-palette,
+      typography: (
+        plain-family: Open Sans,
+        brand-family: Open Sans,
+        bold-weight: 700,
+        medium-weight: 500,
+        regular-weight: 300
+      ),
+      density: 0
+    ),
+    $overrides: (surface: rgb(var(--base-3x-light)))
+  );
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  background-color: rgb(var(--primary));
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+button,
+a {
+  all: unset;
+}
+
+ol,
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+// Variables
+:root {
+  --primary-3x-light: 238, 242, 255;
+  --primary-2x-light: 224, 231, 255;
+  --primary-x-light: 199, 210, 254;
+  --primary-light: 165, 180, 252;
+  --primary: 129, 140, 248;
+  --primary-mid: 99, 102, 241;
+  --primary-dark: 79, 70, 229;
+  --primary-x-dark: 67, 56, 202;
+  --primary-2x-dark: 55, 48, 163;
+  --primary-3x-dark: 49, 46, 129;
+  --primary-4x-dark: 30, 27, 75;
+
+  --base-3x-light: 249, 250, 251;
+  --base-2x-light: 243, 244, 246;
+  --base-x-light: 229, 231, 235;
+  --base-light: 209, 213, 219;
+  --base: 156, 163, 175;
+  --base-mid: 107, 114, 128;
+  --base-dark: 75, 85, 99;
+  --base-x-dark: 55, 65, 81;
+  --base-2x-dark: 31, 41, 55;
+  --base-3x-dark: 17, 24, 39;
+  --base-4x-dark: 3, 7, 18;
+
+  --border-radius: 0.75rem;
+  --border-radius-sm: 0.5rem;
+
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}

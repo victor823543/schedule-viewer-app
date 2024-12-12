@@ -1,8 +1,21 @@
-<mat-form-field>
-  <mat-label>Schedule</mat-label>
-  <mat-select (selectionChange)="onScheduleSelect($event.value)" [value]="selectedSchedule?.id">
-    <mat-option *ngFor="let schedule of schedules$ | async" [value]="schedule.id">{{
-      schedule.displayName
-    }}</mat-option>
-  </mat-select>
-</mat-form-field>
+<div class="schedule-select">
+  <div class="dropdown" (click)="toggleDropdown()">
+    <div class="dropdown-selected">
+      <span class="display-text">{{ selectedSchedule?.displayName || 'Select a schedule' }}</span>
+
+      <button mat-icon-button class="dropdown-arrow" [class.open]="dropdownOpen">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+    </div>
+    <ul class="dropdown-options" [@dropdownAnimation]="dropdownOpen ? 'open' : 'closed'">
+      <li
+        *ngFor="let schedule of schedules$ | async"
+        class="dropdown-option"
+        [class.selected]="schedule.id === selectedSchedule?.id"
+        (click)="onScheduleSelect(schedule.id)"
+      >
+        {{ schedule.displayName }}
+      </li>
+    </ul>
+  </div>
+</div>
