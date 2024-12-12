@@ -21,7 +21,7 @@ html {
 
 body {
   margin: 0;
-  padding: 0;
+  padding: 0.75rem;
   box-sizing: border-box;
   font-family: 'Montserrat', sans-serif;
   background-color: rgb(var(--primary));
@@ -48,6 +48,42 @@ li {
 button,
 a {
   cursor: pointer;
+}
+
+// Adjusting calendar slot height
+.slot-lane {
+  height: 2rem !important;
+}
+
+// Customizing full calendar
+.fc {
+  --fc-button-active-bg-color: rgb(var(--primary-mid));
+  --fc-button-bg-color: rgb(var(--primary));
+
+  --fc-button-active-border-color: rgb(var(--primary-mid));
+  --fc-button-border-color: rgb(var(--primary));
+
+  --fc-button-hover-bg-color: rgb(var(--primary-light));
+  --fc-button-hover-border-color: rgb(var(--primary-light));
+
+  --fc-button-text-color: #fff;
+
+  .day-header {
+    padding: 0.5rem 0;
+    color: rgb(var(--base-dark));
+    font-weight: 500;
+  }
+
+  .fc-toolbar-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  button {
+    :focus {
+      outline: none;
+    }
+  }
 }
 
 // Variables

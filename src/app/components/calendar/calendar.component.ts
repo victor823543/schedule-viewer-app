@@ -31,7 +31,6 @@ export class CalendarComponent {
     initialView: 'timeGridWeek',
 
     // some customizations
-    headerToolbar: false,
     allDaySlot: false,
     slotLabelFormat: {
       hour: 'numeric',
@@ -43,6 +42,21 @@ export class CalendarComponent {
       minute: '2-digit',
       hour12: false
     },
+
+    headerToolbar: {
+      // left: 'prev,next',
+      left: 'today',
+      center: 'title',
+      right: 'timeGridWeek,timeGridDay'
+    },
+
+    slotLaneClassNames: 'slot-lane',
+    dayHeaderClassNames: 'day-header',
+
+    height: 'auto',
+
+    slotMinTime: '07:00:00',
+    slotMaxTime: '18:00:00',
 
     // monday is the first day of the week
     firstDay: 1,
