@@ -14,7 +14,7 @@
   <div class="calendar">
     <!-- Weekday labels -->
     <div class="calendar-header">
-      <div *ngFor="let day of ['M', 'T', 'W', 'T', 'F', 'S', 'S']" class="day-header">
+      <div *ngFor="let day of ['M', 'T', 'W', 'T', 'F']" class="day-header">
         {{ day }}
       </div>
     </div>
@@ -30,7 +30,7 @@
         <div
           *ngFor="
             let day of daysInMonth
-              | slice: daysInMonth.indexOf(week[0]) : daysInMonth.indexOf(week[0]) + 7
+              | slice: daysInMonth.indexOf(week[0]) : daysInMonth.indexOf(week[0]) + 5
           "
           class="day-cell"
         >
@@ -45,7 +45,7 @@
         <div
           *ngFor="
             let day of daysInMonth
-              | slice: daysInMonth.indexOf(week[0]) : daysInMonth.indexOf(week[0]) + 7
+              | slice: daysInMonth.indexOf(week[0]) : daysInMonth.indexOf(week[0]) + 5
           "
           class="day-cell day-view"
           [class.selected]="isDaySelected(day)"
