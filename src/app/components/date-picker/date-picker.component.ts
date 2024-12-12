@@ -1,4 +1,4 @@
-import { Component, input, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, input, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
@@ -21,7 +21,11 @@ export class DatePickerComponent implements OnInit {
   selectedDateFormatted!: string; // Holds the selected date in YYYY-MM-DD format
   displayValue!: string; // Holds the value to be displayed based on the view
 
-  constructor(public dateService: DateService) {}
+  constructor(public dateService: DateService) {
+    effect(() => {
+      this.updateDisplayValue();
+    });
+  }
 
   ngOnInit(): void {
     this.updateDisplayValue();

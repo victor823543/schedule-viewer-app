@@ -1,11 +1,11 @@
 <div class="container">
   <mat-toolbar class="toolbar">
-    <app-date-picker view="day"></app-date-picker>
+    <app-date-picker [view]="selectedView()"></app-date-picker>
     <app-schedule-select></app-schedule-select>
   </mat-toolbar>
 
   <app-filter></app-filter>
 
   <!-- instantiates an instance of our calendar component and passes some input data -->
-  <app-calendar [events]="events()"></app-calendar>
+  <app-calendar (viewChange)="setView($event)" [events]="events()"></app-calendar>
 </div>

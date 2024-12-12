@@ -1,4 +1,4 @@
-import { Component, effect, input, viewChild } from '@angular/core';
+import { Component, effect, input, output, viewChild } from '@angular/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -20,6 +20,7 @@ export type CalendarEvent = {
 export class CalendarComponent {
   // access the full calendar component
   private readonly _fullCalendar = viewChild(FullCalendarComponent);
+  viewChange = output<'day' | 'week'>();
 
   // input parameters to be passed using the component's selector
   public readonly events = input.required<CalendarEvent[]>();
@@ -43,11 +44,32 @@ export class CalendarComponent {
       hour12: false
     },
 
+    navLinks: true,
+
+    customButtons: {
+      weekBtn: {
+        text: 'Week',
+        click: () => {
+          this._fullCalendar()?.getApi().changeView('timeGridWeek');
+          this.viewChange.emit('week');
+          this.updateButtonClasses('timeGridWeek');
+        }
+      },
+      dayBtn: {
+        text: 'Day',
+        click: () => {
+          this._fullCalendar()?.getApi().changeView('timeGridDay');
+          this.viewChange.emit('day');
+          this.updateButtonClasses('timeGridDay');
+        }
+      }
+    },
+
     headerToolbar: {
       // left: 'prev,next',
       left: 'today',
       center: 'title',
-      right: 'timeGridWeek,timeGridDay'
+      right: 'dayBtn,weekBtn'
     },
 
     slotLaneClassNames: 'slot-lane',
@@ -65,7 +87,16 @@ export class CalendarComponent {
     hiddenDays: [0, 6],
 
     // what timezone to display the calendar in, for example 'local' or 'UTC'
-    timeZone: 'local'
+    timeZone: 'local',
+
+    navLinkDayClick: (date) => {
+      const formattedDate = date.toISOString().split('T')[0];
+      this.dateService.setDate(formattedDate);
+    },
+
+    viewDidMount: (info) => {
+      this.updateButtonClasses(info.view.type);
+    }
   };
 
   constructor(private dateService: DateService) {
@@ -75,5 +106,17 @@ export class CalendarComponent {
       if (!initialDate) return;
       this._fullCalendar()?.getApi().gotoDate(initialDate);
     });
+  }
+
+  private updateButtonClasses(activeView: string) {
+    const weekBtn = document.querySelector('.fc-weekBtn-button');
+    const dayBtn = document.querySelector('.fc-dayBtn-button');
+
+    if (weekBtn) {
+      weekBtn.classList.toggle('fc-button-active', activeView === 'timeGridWeek');
+    }
+    if (dayBtn) {
+      dayBtn.classList.toggle('fc-button-active', activeView === 'timeGridDay');
+    }
   }
 }

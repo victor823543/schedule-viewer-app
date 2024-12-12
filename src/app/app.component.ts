@@ -33,6 +33,9 @@ export class AppComponent implements OnInit {
   // the selected week
   protected readonly selectedWeek = signal<string | null>(null);
 
+  // the selected view
+  selectedView = signal<'day' | 'week'>('week');
+
   constructor(
     private calendarService: CalendarService,
     private schedulesService: SchedulesService,
@@ -54,6 +57,10 @@ export class AppComponent implements OnInit {
         )
       )
       .subscribe((events) => this.events.set(events));
+  }
+
+  setView(view: 'day' | 'week'): void {
+    this.selectedView.set(view);
   }
 
   private checkAndOpenDialog(): void {
