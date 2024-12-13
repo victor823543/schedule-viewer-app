@@ -63,12 +63,19 @@ export class CalendarComponent {
           this.viewChange.emit('day');
           this.updateButtonClasses('timeGridDay');
         }
+      },
+      todayBtn: {
+        text: 'Today',
+        click: () => {
+          this._fullCalendar()?.getApi().today();
+          this.dateService.setDate(new Date().toLocaleDateString('en-CA'));
+        }
       }
     },
 
     headerToolbar: {
       // left: 'prev,next',
-      left: 'today',
+      left: 'todayBtn',
       center: 'title',
       right: 'dayBtn,weekBtn'
     },
