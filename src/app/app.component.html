@@ -1,10 +1,16 @@
-<div class="container">
+<!-- Side section only visible on screenwidth greater than 1024px -->
+<div class="side-section">
+  <app-filter class="filter-lg"></app-filter>
+</div>
+
+<div class="main-container">
   <mat-toolbar class="toolbar">
     <app-date-picker [view]="selectedView()"></app-date-picker>
     <app-schedule-select></app-schedule-select>
   </mat-toolbar>
 
-  <app-filter></app-filter>
+  <!-- Filter component for screenwidth smaller than 1024px -->
+  <app-filter class="filter-sm"></app-filter>
 
   <!-- instantiates an instance of our calendar component and passes some input data -->
   <app-calendar (viewChange)="setView($event)" [events]="events()"></app-calendar>

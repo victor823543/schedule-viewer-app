@@ -3,7 +3,7 @@
 }
 
 .example-headers-align .mat-expansion-panel-header-description {
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
 }
 
@@ -15,4 +15,15 @@
   max-height: 25rem;
   overflow-y: scroll;
   overscroll-behavior: contain;
+}
+
+@media (min-width: 1024px) {
+  .selection-list {
+    max-height: none;
+    height: calc(100vh - 160px - 3.5rem);
+  }
+
+  .selection-list.center-list {
+    height: calc(100vh - 160px - 4.5rem);
+  }
 }
