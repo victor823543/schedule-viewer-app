@@ -30,6 +30,7 @@ export class CalendarComponent {
     // the calendar view to be used
     plugins: [timeGridPlugin],
     initialView: 'timeGridWeek',
+    initialDate: new Date(),
 
     // some customizations
     allDaySlot: false,
@@ -90,8 +91,11 @@ export class CalendarComponent {
     timeZone: 'local',
 
     navLinkDayClick: (date) => {
-      const formattedDate = date.toISOString().split('T')[0];
+      const formattedDate = date.toLocaleDateString('en-CA');
       this.dateService.setDate(formattedDate);
+      this._fullCalendar()?.getApi().changeView('timeGridDay');
+      this.viewChange.emit('day');
+      this.updateButtonClasses('timeGridDay');
     },
 
     viewDidMount: (info) => {
@@ -100,11 +104,14 @@ export class CalendarComponent {
   };
 
   constructor(private dateService: DateService) {
-    // update the calendar's chosen week
+    // Set initial date from stored date
+    this.calendarOptions.initialDate = new Date(this.dateService.selectedDay());
+
+    // Keep calendar in sync with date changes
     effect(() => {
-      const initialDate = this.dateService.selectedDay();
-      if (!initialDate) return;
-      this._fullCalendar()?.getApi().gotoDate(initialDate);
+      const currentDate = this.dateService.selectedDay();
+      if (!currentDate) return;
+      this._fullCalendar()?.getApi().gotoDate(currentDate);
     });
   }
 
