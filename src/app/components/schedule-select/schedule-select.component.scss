@@ -21,7 +21,6 @@
     .dropdown-selected {
       font-weight: 400;
       font-size: 1.2rem;
-      min-width: 14rem;
       padding: 0.25rem 1rem;
       border-radius: var(--border-radius-sm);
       display: flex;
@@ -44,6 +43,7 @@
 
       .display-text {
         padding: 0.25rem 0;
+        display: none;
       }
     }
 
@@ -53,7 +53,7 @@
       font-size: 1.2rem;
       color: rgb(var(--base-dark));
       top: 100%;
-      left: -2rem;
+      left: -10rem;
       right: 0;
       margin-top: 0.5rem;
       padding: 0.5rem;
@@ -90,6 +90,28 @@
           color: #fff;
           font-weight: 500;
         }
+      }
+    }
+  }
+}
+
+@media (min-width: 610px) {
+  .schedule-select {
+    .dropdown {
+      .dropdown-selected {
+        min-width: 14rem;
+
+        .display-text {
+          display: block;
+        }
+
+        .icon-sm {
+          display: none;
+        }
+      }
+
+      .dropdown-options {
+        left: -2rem;
       }
     }
   }

@@ -2,7 +2,7 @@
   <div class="dropdown" (click)="toggleDropdown()">
     <div class="dropdown-selected">
       <span class="display-text">{{ selectedSchedule?.displayName || 'Select a schedule' }}</span>
-
+      <mat-icon class="icon-sm">description</mat-icon>
       <button mat-icon-button class="dropdown-arrow" [class.open]="dropdownOpen">
         <mat-icon>keyboard_arrow_down</mat-icon>
       </button>

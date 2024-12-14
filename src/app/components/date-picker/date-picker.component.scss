@@ -1,7 +1,13 @@
 .date-picker {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.left-container {
+  display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -15,4 +21,10 @@ button {
   background: none;
   border: none;
   cursor: pointer;
+}
+
+@media (min-width: 610px) {
+  .date-picker {
+    justify-content: center;
+  }
 }

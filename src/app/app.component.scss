@@ -1,16 +1,51 @@
 .main-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .toolbar {
-  justify-content: space-between;
   border-radius: var(--border-radius);
+}
+
+.toolbar-main {
+  justify-content: space-between;
+}
+
+.date-lg {
+  display: none;
+}
+
+.date-sm {
+  flex: 1;
 }
 
 .side-section {
   display: none;
+}
+
+img {
+  display: block;
+  height: 100%;
+  padding: 0.5rem;
+}
+
+@media (min-width: 610px) {
+  .main-container {
+    gap: 1.5rem;
+  }
+
+  .toolbar-sm {
+    display: none;
+  }
+
+  .date-lg {
+    display: block;
+  }
+
+  img {
+    display: none;
+  }
 }
 
 @media (min-width: 1024px) {

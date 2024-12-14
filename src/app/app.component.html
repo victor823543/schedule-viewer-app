@@ -4,9 +4,13 @@
 </div>
 
 <div class="main-container">
-  <mat-toolbar class="toolbar">
-    <app-date-picker [view]="selectedView()"></app-date-picker>
+  <mat-toolbar class="toolbar toolbar-main toolbar-schedule">
+    <img src="rs-symbol.svg" alt="Logo" />
+    <app-date-picker [view]="selectedView()" class="date-lg"></app-date-picker>
     <app-schedule-select></app-schedule-select>
+  </mat-toolbar>
+  <mat-toolbar class="toolbar toolbar-sm toolbar-date">
+    <app-date-picker [view]="selectedView()" class="date-sm"></app-date-picker>
   </mat-toolbar>
 
   <!-- Filter component for screenwidth smaller than 1024px -->
