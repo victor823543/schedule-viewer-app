@@ -11,7 +11,8 @@ import {
   switchMap,
   throwError
 } from 'rxjs';
-import { Event } from '../models/calendar.model';
+import { Event, EventsResponseSchema } from '../models/calendar.model';
+import { verifyResponse } from '../utils/schema.validator';
 import { FilterService } from './filter.service';
 import { SchedulesService } from './schedules.service';
 
@@ -49,7 +50,8 @@ export class CalendarService {
         })),
         switchMap(({ filters, selectedSchedule }) =>
           this.fetchEvents(filters, selectedSchedule!.id)
-        )
+        ),
+        verifyResponse(EventsResponseSchema)
       )
       .subscribe((events) => this.calendarEventsSubject.next(events));
   }

@@ -1,7 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, Observable, switchMap } from 'rxjs';
-import { Entity, ScheduleResponse, SchedulesResponse } from '../models/schedule.model';
+import {
+  Entity,
+  ScheduleResponse,
+  ScheduleResponseSchema,
+  SchedulesResponse,
+  SchedulesResponseSchema
+} from '../models/schedule.model';
+import { verifyResponse } from '../utils/schema.validator';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -34,7 +41,8 @@ export class SchedulesService {
     this.selectedSchedule$
       .pipe(
         filter((schedule): schedule is Entity => schedule !== null),
-        switchMap((schedule) => this.http.get<ScheduleResponse>(`/schedules/${schedule.id}`))
+        switchMap((schedule) => this.http.get<ScheduleResponse>(`/schedules/${schedule.id}`)),
+        verifyResponse(ScheduleResponseSchema)
       )
       .subscribe((scheduleData) => {
         console.log('Fetched schedule data:', scheduleData);
@@ -48,10 +56,13 @@ export class SchedulesService {
    */
   public ensureSchedulesLoaded(): void {
     if (!this.hasFetched) {
-      this.http.get<SchedulesResponse>('/schedules').subscribe((schedules) => {
-        this.schedulesSubject.next(schedules);
-        this.hasFetched = true;
-      });
+      this.http
+        .get<SchedulesResponse>('/schedules')
+        .pipe(verifyResponse(SchedulesResponseSchema))
+        .subscribe((schedules) => {
+          this.schedulesSubject.next(schedules);
+          this.hasFetched = true;
+        });
     }
   }
 
