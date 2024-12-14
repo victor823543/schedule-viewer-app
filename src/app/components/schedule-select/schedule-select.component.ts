@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -46,28 +46,50 @@ import { SchedulesService } from '../../services/schedules.service';
     ])
   ]
 })
-export class ScheduleSelectComponent implements OnInit {
+export class ScheduleSelectComponent implements OnInit, OnDestroy {
   schedules$!: Observable<SchedulesResponse>;
 
   selectedSchedule: Entity | null = null;
 
-  dropdownOpen = false;
-  toggleDropdown(): void {
-    this.dropdownOpen = !this.dropdownOpen;
+  dropdownOpen = signal<boolean>(false);
+  private subscription: any;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.closeDropdown();
+    }
   }
 
-  constructor(private schedulesService: SchedulesService) {}
+  constructor(
+    private schedulesService: SchedulesService,
+    private elementRef: ElementRef
+  ) {}
 
   ngOnInit() {
-    this.schedulesService.ensureSchedulesLoaded(); // Triggers fetch if not already done
+    this.schedulesService.ensureSchedulesLoaded();
     this.schedules$ = this.schedulesService.schedules$;
-    this.schedulesService.selectedSchedule$.subscribe((schedule) => {
+    this.subscription = this.schedulesService.selectedSchedule$.subscribe((schedule) => {
       this.selectedSchedule = schedule;
     });
   }
 
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  closeDropdown(): void {
+    this.dropdownOpen.set(false);
+  }
+
+  toggleDropdown(): void {
+    this.dropdownOpen.update((prev) => !prev);
+  }
+
   onScheduleSelect(scheduleId: string): void {
-    this.dropdownOpen = false;
+    this.closeDropdown();
     this.schedules$.subscribe((schedules) => {
       const selected = schedules.find((schedule) => schedule.id === scheduleId) || null;
       this.schedulesService.setSelectedSchedule(selected);

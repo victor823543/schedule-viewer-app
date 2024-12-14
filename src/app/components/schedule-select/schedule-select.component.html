@@ -1,13 +1,17 @@
 <div class="schedule-select">
-  <div class="dropdown" (click)="toggleDropdown()">
-    <div class="dropdown-selected">
+  <div class="dropdown">
+    <div class="dropdown-selected" (click)="toggleDropdown()">
       <span class="display-text">{{ selectedSchedule?.displayName || 'Select a schedule' }}</span>
       <mat-icon class="icon-sm">description</mat-icon>
-      <button mat-icon-button class="dropdown-arrow" [class.open]="dropdownOpen">
+      <button mat-icon-button class="dropdown-arrow" [class.open]="dropdownOpen()">
         <mat-icon>keyboard_arrow_down</mat-icon>
       </button>
     </div>
-    <ul class="dropdown-options" [@dropdownAnimation]="dropdownOpen ? 'open' : 'closed'">
+    <ul
+      class="dropdown-options"
+      (click)="$event.stopPropagation()"
+      [@dropdownAnimation]="dropdownOpen() ? 'open' : 'closed'"
+    >
       <li
         *ngFor="let schedule of schedules$ | async"
         class="dropdown-option"
