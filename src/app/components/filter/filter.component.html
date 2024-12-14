@@ -1,50 +1,24 @@
 <mat-accordion class="example-headers-align">
-  <mat-expansion-panel>
+  <mat-expansion-panel *ngFor="let filter of filters">
     <mat-expansion-panel-header>
-      <mat-panel-title> Teachers </mat-panel-title>
+      <mat-panel-title>{{ filter.title }}</mat-panel-title>
       <mat-panel-description>
-        <mat-icon>face</mat-icon>
+        <mat-icon>{{ filter.icon }}</mat-icon>
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <mat-selection-list #teachers [multiple]="false" class="selection-list">
-      <mat-list-option
-        *ngFor="let teacher of teachers$ | async"
-        [value]="teacher.id"
-        (selectedChange)="onTeacherSelect(teacher)"
-        >{{ teacher.displayName }}</mat-list-option
-      >
-    </mat-selection-list>
-  </mat-expansion-panel>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title> Groups </mat-panel-title>
-      <mat-panel-description>
-        <mat-icon>groups</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-selection-list #groups [multiple]="false" class="selection-list center-list">
-      <mat-list-option
-        *ngFor="let group of groups$ | async"
-        [value]="group.id"
-        (selectedChange)="onGroupSelect(group)"
-        >{{ group.displayName }}</mat-list-option
-      >
-    </mat-selection-list>
-  </mat-expansion-panel>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title> Locations </mat-panel-title>
-      <mat-panel-description>
-        <mat-icon>location_on</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-selection-list #locations [multiple]="false" class="selection-list">
-      <mat-list-option
-        *ngFor="let location of locations$ | async"
-        [value]="location.id"
-        (selectedChange)="onLocationSelect(location)"
-        >{{ location.displayName }}</mat-list-option
-      >
-    </mat-selection-list>
+    <div class="container" [ngClass]="filter.cssClass">
+      <app-filter-search [label]="filter.title" (search)="filter.onSearch($event)">
+      </app-filter-search>
+
+      <mat-selection-list [multiple]="false" class="selection-list" [ngClass]="filter.cssClass">
+        <mat-list-option
+          *ngFor="let item of filter.data$ | async"
+          [value]="item.id"
+          (selectedChange)="filter.onSelect(item)"
+        >
+          {{ item.displayName }}
+        </mat-list-option>
+      </mat-selection-list>
+    </div>
   </mat-expansion-panel>
 </mat-accordion>

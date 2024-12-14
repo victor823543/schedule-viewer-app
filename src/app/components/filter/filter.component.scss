@@ -11,19 +11,30 @@
   margin-left: 8px;
 }
 
-.selection-list {
+.container {
+  padding-top: 0.5rem;
   max-height: 25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.selection-list {
+  margin: 0.5rem 0;
+  padding-bottom: 0.5rem;
+  flex: 1;
   overflow-y: scroll;
   overscroll-behavior: contain;
 }
 
 @media (min-width: 1024px) {
-  .selection-list {
+  .container {
     max-height: none;
     height: calc(100vh - 160px - 3.5rem);
+    display: flex;
+    flex-direction: column;
   }
 
-  .selection-list.center-list {
+  .container.center {
     height: calc(100vh - 160px - 4.5rem);
   }
 }
