@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,9 +8,11 @@ import { combineLatest, filter, map, take } from 'rxjs';
 import { CalendarComponent, CalendarEvent } from './components/calendar/calendar.component';
 import { DatePickerComponent } from './components/date-picker/date-picker.component';
 import { DialogComponent } from './components/dialog/dialog.component';
+import { FilterChipsComponent } from './components/filter-chips/filter-chips.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { ScheduleSelectComponent } from './components/schedule-select/schedule-select.component';
 import { CalendarService } from './services/calendar.service';
+import { FilterService } from './services/filter.service';
 import { SchedulesService } from './services/schedules.service';
 
 @Component({
@@ -21,7 +24,9 @@ import { SchedulesService } from './services/schedules.service';
     CalendarComponent,
     ScheduleSelectComponent,
     FilterComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    FilterChipsComponent,
+    CommonModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -36,9 +41,15 @@ export class AppComponent implements OnInit {
   // the selected view
   selectedView = signal<'day' | 'week'>('week');
 
+  // whether a filter is active (to be able to remove the filter chips component from the dom and prevent excessive gap)
+  protected get hasFilter() {
+    return this.filterService.hasSelectedFilter;
+  }
+
   constructor(
     private calendarService: CalendarService,
     private schedulesService: SchedulesService,
+    private filterService: FilterService,
     private dialog: MatDialog
   ) {}
 

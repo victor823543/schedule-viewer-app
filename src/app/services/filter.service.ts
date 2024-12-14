@@ -1,70 +1,72 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { computed, Injectable, signal, Signal } from '@angular/core';
 import { Entity } from '../models/schedule.model';
 
-type FilterState = {
+export type FilterState = {
   value: Entity | null;
   active: boolean;
+};
+
+export type SetFilterPayload = {
+  value: Entity | null;
+  active?: boolean;
 };
 
 @Injectable({
   providedIn: 'root'
 })
 export class FilterService {
-  private filters = {
-    teacher: new BehaviorSubject<FilterState>({ value: null, active: false }),
-    group: new BehaviorSubject<FilterState>({ value: null, active: false }),
-    location: new BehaviorSubject<FilterState>({ value: null, active: false }),
-    week: new BehaviorSubject<string | null>(null)
-  };
+  // If value is null, the filter is not selected. If active is false, the filter is not applied to the query.
+  private readonly teacherFilter = signal<FilterState>({ value: null, active: false });
+  private readonly groupFilter = signal<FilterState>({ value: null, active: false });
+  private readonly locationFilter = signal<FilterState>({ value: null, active: false });
+  private readonly weekFilter = signal<string | null>(null);
 
-  // Functions to get the observables for each filter
-  get teacher$(): Observable<FilterState> {
-    return this.filters.teacher.asObservable();
-  }
+  // Readonly signals
+  readonly teacher: Signal<FilterState> = this.teacherFilter.asReadonly();
+  readonly group: Signal<FilterState> = this.groupFilter.asReadonly();
+  readonly location: Signal<FilterState> = this.locationFilter.asReadonly();
+  readonly week: Signal<string | null> = this.weekFilter.asReadonly();
 
-  get group$(): Observable<FilterState> {
-    return this.filters.group.asObservable();
-  }
+  // Whether any filter is selected
+  readonly hasSelectedFilter: Signal<boolean> = computed(() => {
+    return [this.teacherFilter(), this.groupFilter(), this.locationFilter()].some(
+      (filter) => filter.value !== null
+    );
+  });
 
-  get location$(): Observable<FilterState> {
-    return this.filters.location.asObservable();
-  }
-
-  get week$(): Observable<string | null> {
-    return this.filters.week.asObservable();
-  }
-
-  // Functions to set the filter values
   setTeacher(value: Entity | null, active: boolean = true): void {
-    this.filters.teacher.next({ value, active });
+    this.teacherFilter.set({ value, active });
   }
 
   setGroup(value: Entity | null, active: boolean = true): void {
-    this.filters.group.next({ value, active });
+    this.groupFilter.set({ value, active });
   }
 
   setLocation(value: Entity | null, active: boolean = true): void {
-    this.filters.location.next({ value, active });
+    this.locationFilter.set({ value, active });
   }
 
   setWeek(week: string | null): void {
-    this.filters.week.next(week);
+    this.weekFilter.set(week);
   }
 
-  // Function to get filter values prepared for fetching data
+  // Get the active filters as an object that can be used in the calendar events query
   getActiveFilters(): { [key: string]: string | null } {
     const activeFilters: { [key: string]: string | null } = {};
-    if (this.filters.teacher.value.active && this.filters.teacher.value.value) {
-      activeFilters['teachers'] = this.filters.teacher.value.value.id;
+    const teacher = this.teacherFilter();
+    const group = this.groupFilter();
+    const location = this.locationFilter();
+
+    if (teacher.active && teacher.value) {
+      activeFilters['teachers'] = teacher.value.id;
     }
-    if (this.filters.group.value.active && this.filters.group.value.value) {
-      activeFilters['groups'] = this.filters.group.value.value.id;
+    if (group.active && group.value) {
+      activeFilters['groups'] = group.value.id;
     }
-    if (this.filters.location.value.active && this.filters.location.value.value) {
-      activeFilters['inLocations'] = this.filters.location.value.value.id;
+    if (location.active && location.value) {
+      activeFilters['inLocations'] = location.value.id;
     }
-    activeFilters['week'] = this.filters.week.value;
+    activeFilters['week'] = this.weekFilter();
     return activeFilters;
   }
 }

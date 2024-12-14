@@ -18,3 +18,9 @@ export type ScheduleResponse = {
 };
 
 export type SchedulesResponse = Entity[];
+
+export enum FilterOption {
+  TEACHER = 'teacher',
+  GROUP = 'group',
+  LOCATION = 'location'
+}

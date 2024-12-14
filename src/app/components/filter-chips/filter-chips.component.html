@@ -1,0 +1,10 @@
+<mat-chip-set>
+  <app-chip-item
+    *ngFor="let filterOption of filterOptions()"
+    [filterOption]="filterOption.option"
+    [active]="filterOption.active"
+    [item]="filterOption.value"
+    (chipAction)="handleChipAction($event)"
+  >
+  </app-chip-item>
+</mat-chip-set>

@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject,
   combineLatest,
@@ -26,14 +27,13 @@ export class CalendarService {
     private readonly filterService: FilterService,
     private schedulesService: SchedulesService
   ) {
-    // Automatically refetch data when filters change and are valid
-    combineLatest([
-      this.schedulesService.selectedSchedule$,
-      this.filterService.teacher$,
-      this.filterService.group$,
-      this.filterService.location$,
-      this.filterService.week$
-    ])
+    // Convert signals to observables
+    const teacher$ = toObservable(this.filterService.teacher);
+    const group$ = toObservable(this.filterService.group);
+    const location$ = toObservable(this.filterService.location);
+    const week$ = toObservable(this.filterService.week);
+
+    combineLatest([this.schedulesService.selectedSchedule$, teacher$, group$, location$, week$])
       .pipe(
         debounceTime(300), // Avoid excessive API calls
         filter(([selectedSchedule, teacher, group, location, week]) => {

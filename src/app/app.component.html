@@ -12,6 +12,9 @@
   <!-- Filter component for screenwidth smaller than 1024px -->
   <app-filter class="filter-sm"></app-filter>
 
+  <!-- Filter chips component -->
+  <app-filter-chips *ngIf="hasFilter()"></app-filter-chips>
+
   <!-- instantiates an instance of our calendar component and passes some input data -->
   <app-calendar (viewChange)="setView($event)" [events]="events()"></app-calendar>
 </div>
