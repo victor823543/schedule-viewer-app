@@ -9,6 +9,7 @@ import {
   SchedulesResponseSchema
 } from '../models/schedule.model';
 import { verifyResponse } from '../utils/schema.validator';
+import { FilterService } from './filter.service';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -30,7 +31,8 @@ export class SchedulesService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    private readonly filterService: FilterService
   ) {
     // Initialize selectedScheduleSubject with value from session storage
     const storedSchedule = this.storageService.getSessionItem<Entity>('selectedSchedule');
@@ -47,6 +49,7 @@ export class SchedulesService {
       .subscribe((scheduleData) => {
         console.log('Fetched schedule data:', scheduleData);
         this.scheduleDataSubject.next(scheduleData);
+        this.filterService.clearEntityFilters();
       });
   }
 

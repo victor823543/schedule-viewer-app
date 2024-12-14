@@ -46,6 +46,12 @@ export class FilterService {
     this.locationFilter.set({ value, active });
   }
 
+  clearEntityFilters(): void {
+    this.teacherFilter.set({ value: null, active: false });
+    this.groupFilter.set({ value: null, active: false });
+    this.locationFilter.set({ value: null, active: false });
+  }
+
   setWeek(week: string | null): void {
     this.weekFilter.set(week);
   }
