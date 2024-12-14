@@ -118,7 +118,7 @@ export class CalendarComponent {
     effect(() => {
       const currentDate = this.dateService.selectedDay();
       if (!currentDate) return;
-      this._fullCalendar()?.getApi().gotoDate(currentDate);
+      this._fullCalendar()?.getApi()?.gotoDate(currentDate);
     });
   }
 

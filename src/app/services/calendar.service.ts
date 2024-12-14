@@ -3,11 +3,13 @@ import { Injectable } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   debounceTime,
   filter,
   map,
   Observable,
+  of,
   switchMap,
   throwError
 } from 'rxjs';
@@ -16,11 +18,19 @@ import { verifyResponse } from '../utils/schema.validator';
 import { FilterService } from './filter.service';
 import { SchedulesService } from './schedules.service';
 
+type FilterResult = {
+  selectedSchedule: {
+    id: string;
+    displayName: string;
+  } | null;
+  week: string | null;
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class CalendarService {
-  private calendarEventsSubject = new BehaviorSubject<any[]>([]);
+  private calendarEventsSubject = new BehaviorSubject<Event[]>([]);
   public calendarEvents$: Observable<Event[]> = this.calendarEventsSubject.asObservable();
 
   constructor(
@@ -36,22 +46,28 @@ export class CalendarService {
 
     combineLatest([this.schedulesService.selectedSchedule$, teacher$, group$, location$, week$])
       .pipe(
-        debounceTime(300), // Avoid excessive API calls
-        filter(([selectedSchedule, teacher, group, location, week]) => {
-          return (
-            selectedSchedule !== null &&
-            week !== null &&
-            (teacher.active || group.active || location.active)
-          );
+        debounceTime(300),
+        map(([selectedSchedule, teacher, group, location, week]) => {
+          const hasActiveFilters = teacher.active || group.active || location.active;
+          if (!hasActiveFilters) {
+            this.calendarEventsSubject.next([]);
+            return null;
+          }
+          return { selectedSchedule, week };
         }),
-        map(([selectedSchedule]) => ({
+        filter(
+          (result): result is FilterResult =>
+            result !== null && result.selectedSchedule !== null && result.week !== null
+        ),
+        map(({ selectedSchedule }) => ({
           filters: this.filterService.getActiveFilters(),
           selectedSchedule
         })),
         switchMap(({ filters, selectedSchedule }) =>
           this.fetchEvents(filters, selectedSchedule!.id)
         ),
-        verifyResponse(EventsResponseSchema)
+        verifyResponse(EventsResponseSchema),
+        catchError(() => of([]))
       )
       .subscribe((events) => this.calendarEventsSubject.next(events));
   }
