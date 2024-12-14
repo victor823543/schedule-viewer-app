@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { combineLatest, filter, map, take } from 'rxjs';
+import { combineLatest, filter, map, Subject, take, takeUntil } from 'rxjs';
 import { CalendarComponent, CalendarEvent } from './components/calendar/calendar.component';
 import { DatePickerComponent } from './components/date-picker/date-picker.component';
 import { DialogComponent } from './components/dialog/dialog.component';
@@ -31,7 +31,9 @@ import { SchedulesService } from './services/schedules.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
+
   // some dummy calendar data
   protected readonly events = signal<CalendarEvent[]>([]);
 
@@ -58,6 +60,7 @@ export class AppComponent implements OnInit {
 
     this.calendarService.calendarEvents$
       .pipe(
+        takeUntil(this.destroy$),
         map((events) =>
           events.map((event) => ({
             title: event.course?.displayName || event.type || '',
@@ -68,6 +71,11 @@ export class AppComponent implements OnInit {
         )
       )
       .subscribe((events) => this.events.set(events));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   setView(view: 'day' | 'week'): void {

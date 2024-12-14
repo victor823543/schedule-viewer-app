@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject,
@@ -10,7 +10,9 @@ import {
   map,
   Observable,
   of,
+  Subject,
   switchMap,
+  takeUntil,
   throwError
 } from 'rxjs';
 import { Event, EventsResponseSchema } from '../models/calendar.model';
@@ -29,7 +31,8 @@ type FilterResult = {
 @Injectable({
   providedIn: 'root'
 })
-export class CalendarService {
+export class CalendarService implements OnDestroy {
+  private readonly destroy$ = new Subject<void>();
   private calendarEventsSubject = new BehaviorSubject<Event[]>([]);
   public calendarEvents$: Observable<Event[]> = this.calendarEventsSubject.asObservable();
 
@@ -46,6 +49,7 @@ export class CalendarService {
 
     combineLatest([this.schedulesService.selectedSchedule$, teacher$, group$, location$, week$])
       .pipe(
+        takeUntil(this.destroy$),
         debounceTime(300),
         map(([selectedSchedule, teacher, group, location, week]) => {
           const hasActiveFilters = teacher.active || group.active || location.active;
@@ -70,6 +74,11 @@ export class CalendarService {
         catchError(() => of([]))
       )
       .subscribe((events) => this.calendarEventsSubject.next(events));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private fetchEvents(

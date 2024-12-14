@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, Observable, switchMap } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, filter, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import {
   Entity,
   ScheduleResponse,
@@ -15,7 +15,9 @@ import { StorageService } from './storage.service';
 @Injectable({
   providedIn: 'root'
 })
-export class SchedulesService {
+export class SchedulesService implements OnDestroy {
+  private readonly destroy$ = new Subject<void>();
+
   // Handles the list of schedules.
   private schedulesSubject = new BehaviorSubject<SchedulesResponse>([]);
   public schedules$ = this.schedulesSubject.asObservable();
@@ -39,9 +41,9 @@ export class SchedulesService {
     this.selectedScheduleSubject = new BehaviorSubject<Entity | null>(storedSchedule);
     this.selectedSchedule$ = this.selectedScheduleSubject.asObservable();
 
-    // Trigger API call whenever selectedSchedule changes (and is not null)
     this.selectedSchedule$
       .pipe(
+        takeUntil(this.destroy$),
         filter((schedule): schedule is Entity => schedule !== null),
         switchMap((schedule) => this.http.get<ScheduleResponse>(`/schedules/${schedule.id}`)),
         verifyResponse(ScheduleResponseSchema)
@@ -51,6 +53,11 @@ export class SchedulesService {
         this.scheduleDataSubject.next(scheduleData);
         this.filterService.clearEntityFilters();
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
