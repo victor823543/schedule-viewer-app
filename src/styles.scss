@@ -27,6 +27,12 @@ html {
       container-shape: 0.75rem
     )
   );
+
+  @include mat.chips-overrides(
+    (
+      elevated-container-color: rgba(75, 85, 99, 0.2)
+    )
+  );
 }
 
 body {

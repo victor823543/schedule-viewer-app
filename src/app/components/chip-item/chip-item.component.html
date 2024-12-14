@@ -1,9 +1,12 @@
-<mat-chip-option [selected]="active()" (selectionChange)="onSelectionChange($event)" class="chip">
-  <mat-chip-row (removed)="onRemove()">
-    <span class="label">{{ label() }}</span>
-    <span class="filter-label">{{ optionLabel() }}</span>
-    <button matChipRemove>
-      <mat-icon>cancel</mat-icon>
-    </button>
-  </mat-chip-row>
+<mat-chip-option
+  [selected]="active()"
+  (selectionChange)="onSelectionChange($event)"
+  class="chip"
+  (removed)="onRemove()"
+>
+  <span class="label">{{ label() }}</span>
+  <span class="filter-label">{{ optionLabel() }}</span>
+  <button matChipRemove>
+    <mat-icon>cancel</mat-icon>
+  </button>
 </mat-chip-option>
