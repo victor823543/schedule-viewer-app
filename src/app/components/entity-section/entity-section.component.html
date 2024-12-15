@@ -8,7 +8,13 @@
     </mat-expansion-panel-header>
     <div class="container" [ngClass]="item.cssClass">
       <app-filter-search [label]="item.title" (search)="item.onSearch($event)"> </app-filter-search>
-      <button mat-flat-button (click)="onDelete(item.itemType)">Delete selected</button>
+      <button
+        mat-flat-button
+        [disabled]="!hasSelectedItems(item.itemType)"
+        (click)="onDelete(item.itemType)"
+      >
+        Delete selected
+      </button>
       <mat-selection-list
         [multiple]="true"
         class="selection-list"

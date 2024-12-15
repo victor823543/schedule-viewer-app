@@ -180,4 +180,17 @@ export class EntitySectionComponent implements OnInit {
         break;
     }
   }
+
+  hasSelectedItems(type: 'teacher' | 'group' | 'location' | 'course'): boolean {
+    switch (type) {
+      case 'teacher':
+        return this.selectedTeachers().length > 0;
+      case 'group':
+        return this.selectedGroups().length > 0;
+      case 'location':
+        return this.selectedLocations().length > 0;
+      case 'course':
+        return this.selectedCourses().length > 0;
+    }
+  }
 }
