@@ -33,6 +33,28 @@ html {
       elevated-container-color: rgba(75, 85, 99, 0.2)
     )
   );
+
+  @include mat.form-field-overrides(
+    (
+      filled-caret-color: rgb(var(--primary)),
+      filled-focus-active-indicator-color: rgb(var(--primary)),
+      filled-focus-label-text-color: rgb(var(--primary)),
+      filled-container-color: rgb(var(--base-x-light))
+    )
+  );
+
+  @include mat.button-overrides(
+    (
+      filled-container-color: rgb(var(--primary))
+    )
+  );
+
+  @include mat.tabs-overrides(
+    (
+      active-indicator-color: rgb(var(--primary)),
+      active-focus-indicator-color: rgb(var(--primary))
+    )
+  );
 }
 
 body {
