@@ -1,8 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { CreateEntityBody, DeleteEntitiesBody, Entity } from '../models/schedule.model';
+import { CreateEntityBody, Entity } from '../models/schedule.model';
 import { SchedulesService } from './schedules.service';
 
 type CreateEntityParams = {
@@ -19,24 +18,16 @@ type DeleteEntitiesParams = {
 @Injectable({
   providedIn: 'root'
 })
-export class EntityService implements OnInit, OnDestroy {
-  private subscription!: Subscription;
-
+export class EntityService {
   private selectedSchedule: Entity | null = null;
 
   constructor(
     private http: HttpClient,
     private schedulesService: SchedulesService
-  ) {}
-
-  ngOnInit(): void {
-    this.subscription = this.schedulesService.selectedSchedule$.subscribe((schedule) => {
+  ) {
+    this.schedulesService.selectedSchedule$.subscribe((schedule) => {
       this.selectedSchedule = schedule;
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   createEntity(params: CreateEntityParams) {
@@ -61,7 +52,7 @@ export class EntityService implements OnInit, OnDestroy {
       };
     }
 
-    return this.http.post('/api/entities', body).pipe(
+    return this.http.post('/entities', body).pipe(
       tap(() => {
         this.schedulesService.refetchSelectedSchedule();
       })
@@ -73,12 +64,12 @@ export class EntityService implements OnInit, OnDestroy {
       throw new Error('No schedule selected');
     }
 
-    const body: DeleteEntitiesBody = {
-      ids: params.ids,
-      category: params.type,
-      schedule: this.selectedSchedule.id
-    };
-    return this.http.post('/api/entities/delete', body).pipe(
+    const query = new HttpParams()
+      .set('ids', params.ids.join(','))
+      .set('category', params.type)
+      .set('schedule', this.selectedSchedule.id);
+
+    return this.http.delete<void>('/entities/delete-many', { params: query }).pipe(
       tap(() => {
         this.schedulesService.refetchSelectedSchedule();
       })

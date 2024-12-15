@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule, MatSelectionListChange } from '@angular/material/list';
 import { map, Observable } from 'rxjs';
 import { Entity, ScheduleResponse } from '../../models/schedule.model';
+import { EntityService } from '../../services/entity.service';
 import { SchedulesService } from '../../services/schedules.service';
 import { SearchService } from '../../services/search.service';
 import { FilterSearchComponent } from '../search/search.component';
@@ -46,14 +47,15 @@ export class EntitySectionComponent implements OnInit {
 
   items!: ItemsConfig[];
 
-  selectedTeachers = signal<Entity[]>([]);
-  selectedGroups = signal<Entity[]>([]);
-  selectedLocations = signal<Entity[]>([]);
-  selectedCourses = signal<Entity[]>([]);
+  selectedTeachers = signal<string[]>([]);
+  selectedGroups = signal<string[]>([]);
+  selectedLocations = signal<string[]>([]);
+  selectedCourses = signal<string[]>([]);
 
   constructor(
     private schedulesService: SchedulesService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private entityService: EntityService
   ) {}
 
   ngOnInit(): void {
@@ -117,22 +119,22 @@ export class EntitySectionComponent implements OnInit {
     switch (type) {
       case 'teacher':
         this.selectedTeachers.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value as Entity)
+          event.source.selectedOptions.selected.map((selected) => selected.value)
         );
         break;
       case 'group':
         this.selectedGroups.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value as Entity)
+          event.source.selectedOptions.selected.map((selected) => selected.value)
         );
         break;
       case 'location':
         this.selectedLocations.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value as Entity)
+          event.source.selectedOptions.selected.map((selected) => selected.value)
         );
         break;
       case 'course':
         this.selectedCourses.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value as Entity)
+          event.source.selectedOptions.selected.map((selected) => selected.value)
         );
         break;
     }
@@ -142,15 +144,39 @@ export class EntitySectionComponent implements OnInit {
     switch (type) {
       case 'teacher':
         console.log('Deleting teacher', this.selectedTeachers());
+        this.entityService
+          .deleteEntities({
+            ids: this.selectedTeachers(),
+            type: 'teacher'
+          })
+          .subscribe();
         break;
       case 'group':
         console.log('Deleting group', this.selectedGroups());
+        this.entityService
+          .deleteEntities({
+            ids: this.selectedGroups(),
+            type: 'group'
+          })
+          .subscribe();
         break;
       case 'location':
         console.log('Deleting location', this.selectedLocations());
+        this.entityService
+          .deleteEntities({
+            ids: this.selectedLocations(),
+            type: 'location'
+          })
+          .subscribe();
         break;
       case 'course':
         console.log('Deleting course', this.selectedCourses());
+        this.entityService
+          .deleteEntities({
+            ids: this.selectedCourses(),
+            type: 'course'
+          })
+          .subscribe();
         break;
     }
   }
