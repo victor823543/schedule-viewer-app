@@ -35,28 +35,32 @@ export class EntityService {
       throw new Error('No schedule selected');
     }
 
-    let body: CreateEntityBody;
-
     if (params.type === 'course') {
-      body = {
+      const body: CreateEntityBody = {
         displayName: params.displayName,
         category: params.type,
         subject: params.subject || '',
         schedule: this.selectedSchedule.id
       };
+
+      return this.http.post('/courses', body).pipe(
+        tap(() => {
+          this.schedulesService.refetchSelectedSchedule();
+        })
+      );
     } else {
-      body = {
+      const body: CreateEntityBody = {
         displayName: params.displayName,
         category: params.type,
         schedule: this.selectedSchedule.id
       };
-    }
 
-    return this.http.post('/entities', body).pipe(
-      tap(() => {
-        this.schedulesService.refetchSelectedSchedule();
-      })
-    );
+      return this.http.post('/entities', body).pipe(
+        tap(() => {
+          this.schedulesService.refetchSelectedSchedule();
+        })
+      );
+    }
   }
 
   deleteEntities(params: DeleteEntitiesParams) {
@@ -64,15 +68,31 @@ export class EntityService {
       throw new Error('No schedule selected');
     }
 
-    const query = new HttpParams()
-      .set('ids', params.ids.join(','))
-      .set('category', params.type)
-      .set('schedule', this.selectedSchedule.id);
+    if (!params.ids.length) {
+      throw new Error('No ids provided');
+    }
 
-    return this.http.delete<void>('/entities/delete-many', { params: query }).pipe(
-      tap(() => {
-        this.schedulesService.refetchSelectedSchedule();
-      })
-    );
+    if (params.type === 'course') {
+      const query = new HttpParams()
+        .set('ids', params.ids.join(','))
+        .set('schedule', this.selectedSchedule.id);
+
+      return this.http.delete<void>('/courses/delete-many', { params: query }).pipe(
+        tap(() => {
+          this.schedulesService.refetchSelectedSchedule();
+        })
+      );
+    } else {
+      const query = new HttpParams()
+        .set('ids', params.ids.join(','))
+        .set('category', params.type)
+        .set('schedule', this.selectedSchedule.id);
+
+      return this.http.delete<void>('/entities/delete-many', { params: query }).pipe(
+        tap(() => {
+          this.schedulesService.refetchSelectedSchedule();
+        })
+      );
+    }
   }
 }

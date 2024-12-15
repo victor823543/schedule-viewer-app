@@ -1,0 +1,88 @@
+<mat-tab-group>
+  <mat-tab label="Teacher">
+    <form [formGroup]="teacherForm" (ngSubmit)="onSubmit('teacher')" class="form-container">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="displayName" />
+        <mat-error *ngIf="teacherForm.get('displayName')?.invalid">
+          {{ getErrorMessage(teacherForm, 'displayName') }}
+        </mat-error>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="teacherForm.invalid || isSubmitting"
+      >
+        Create Teacher
+      </button>
+    </form>
+  </mat-tab>
+
+  <mat-tab label="Group">
+    <form [formGroup]="groupForm" (ngSubmit)="onSubmit('group')" class="form-container">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="displayName" />
+        <mat-error *ngIf="groupForm.get('displayName')?.invalid">
+          {{ getErrorMessage(groupForm, 'displayName') }}
+        </mat-error>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="groupForm.invalid || isSubmitting"
+      >
+        Create Group
+      </button>
+    </form>
+  </mat-tab>
+
+  <mat-tab label="Location">
+    <form [formGroup]="locationForm" (ngSubmit)="onSubmit('location')" class="form-container">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="displayName" />
+        <mat-error *ngIf="locationForm.get('displayName')?.invalid">
+          {{ getErrorMessage(locationForm, 'displayName') }}
+        </mat-error>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="locationForm.invalid || isSubmitting"
+      >
+        Create Location
+      </button>
+    </form>
+  </mat-tab>
+
+  <mat-tab label="Course">
+    <form [formGroup]="courseForm" (ngSubmit)="onSubmit('course')" class="form-container">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="displayName" />
+        <mat-error *ngIf="courseForm.get('displayName')?.invalid">
+          {{ getErrorMessage(courseForm, 'displayName') }}
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Subject</mat-label>
+        <input matInput formControlName="subject" />
+        <mat-error *ngIf="courseForm.get('subject')?.invalid">
+          {{ getErrorMessage(courseForm, 'subject') }}
+        </mat-error>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="courseForm.invalid || isSubmitting"
+      >
+        Create Course
+      </button>
+    </form>
+  </mat-tab>
+</mat-tab-group>

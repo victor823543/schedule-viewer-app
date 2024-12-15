@@ -54,7 +54,12 @@ export type CreateEntityBody =
     };
 
 export type DeleteEntitiesQuery = {
-  ids: string[];
-  category: 'teacher' | 'group' | 'location' | 'course';
+  ids: string;
+  category: 'teacher' | 'group' | 'location';
+  schedule: string;
+};
+
+export type DeleteCoursesQuery = {
+  ids: string;
   schedule: string;
 };
