@@ -27,6 +27,11 @@
   );
 }
 
+button[mat-flat-button] {
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
 .selection-list {
   margin: 0.5rem 0;
   padding-bottom: 0.5rem;
@@ -35,7 +40,7 @@
   overscroll-behavior: contain;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 940px) {
   .container {
     max-height: none;
     height: calc(100vh - 208px - var(--toolbar-height) - 4.5rem);
