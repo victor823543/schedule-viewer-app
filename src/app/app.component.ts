@@ -4,10 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { combineLatest, filter, map, Subject, take, takeUntil } from 'rxjs';
+import { map, Subject, takeUntil } from 'rxjs';
 import { CalendarComponent, CalendarEvent } from './components/calendar/calendar.component';
 import { DatePickerComponent } from './components/date-picker/date-picker.component';
-import { DialogComponent } from './components/dialog/dialog.component';
 import { FilterChipsComponent } from './components/filter-chips/filter-chips.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { ScheduleSelectComponent } from './components/schedule-select/schedule-select.component';
@@ -56,8 +55,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.checkAndOpenDialog();
-
     this.calendarService.calendarEvents$
       .pipe(
         takeUntil(this.destroy$),
@@ -80,33 +77,5 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setView(view: 'day' | 'week'): void {
     this.selectedView.set(view);
-  }
-
-  private checkAndOpenDialog(): void {
-    this.schedulesService.ensureSchedulesLoaded();
-
-    combineLatest([this.schedulesService.selectedSchedule$, this.schedulesService.schedules$])
-      .pipe(
-        filter(
-          ([selectedSchedule, schedules]) => selectedSchedule === null && schedules.length > 0
-        ),
-        take(1)
-      )
-      .subscribe(([_, schedules]) => {
-        const dialogRef = this.dialog.open(DialogComponent, {
-          data: { schedules },
-          disableClose: true,
-          minHeight: '300px',
-          minWidth: '300px'
-        });
-
-        dialogRef.afterClosed().subscribe((selectedItem) => {
-          if (selectedItem) {
-            this.schedulesService.setSelectedSchedule(selectedItem);
-          } else {
-            console.warn('No item selected!');
-          }
-        });
-      });
   }
 }
