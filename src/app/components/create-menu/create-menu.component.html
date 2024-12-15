@@ -1,0 +1,7 @@
+<button mat-fab [matMenuTriggerFor]="menu" class="menu-btn">
+  <mat-icon>add</mat-icon>
+</button>
+<mat-menu #menu="matMenu" yPosition="above" xPosition="after">
+  <button class="menu-item-btn" (click)="openCreateEventDialog()">Event</button>
+  <button class="menu-item-btn" (click)="navigateToCreate()">Entity</button>
+</mat-menu>

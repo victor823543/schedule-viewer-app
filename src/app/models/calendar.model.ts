@@ -25,3 +25,14 @@ export type CalendarEvent = {
   end: string;
   color?: string;
 };
+
+export type CreateEventBody = {
+  start: string;
+  end: string;
+  duration: number;
+  type?: 'LUNCH';
+  course?: string;
+  locations: string[];
+  teachers: string[];
+  groups: string[];
+};

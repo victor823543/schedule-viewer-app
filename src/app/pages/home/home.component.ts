@@ -5,6 +5,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { map, Subject, takeUntil } from 'rxjs';
 import { CalendarComponent } from '../../components/calendar/calendar.component';
+import { CreateMenuComponent } from '../../components/create-menu/create-menu.component';
 import { DatePickerComponent } from '../../components/date-picker/date-picker.component';
 import { FilterChipsComponent } from '../../components/filter-chips/filter-chips.component';
 import { FilterComponent } from '../../components/filter/filter.component';
@@ -24,7 +25,8 @@ import { FilterService } from '../../services/filter.service';
     FilterComponent,
     DatePickerComponent,
     FilterChipsComponent,
-    CommonModule
+    CommonModule,
+    CreateMenuComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

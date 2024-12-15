@@ -47,6 +47,11 @@ export class CalendarComponent {
 
     navLinks: true,
 
+    editable: true,
+    eventStartEditable: true,
+    eventDurationEditable: true,
+    eventResizableFromStart: true,
+
     customButtons: {
       weekBtn: {
         text: 'Week',
