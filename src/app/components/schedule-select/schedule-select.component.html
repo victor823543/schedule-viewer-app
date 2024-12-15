@@ -12,6 +12,7 @@
       (click)="$event.stopPropagation()"
       [@dropdownAnimation]="dropdownOpen() ? 'open' : 'closed'"
     >
+      <li class="dropdown-option create-new" (click)="openCreateScheduleDialog()">Create New</li>
       <li
         *ngFor="let schedule of schedules$ | async"
         class="dropdown-option"

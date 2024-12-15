@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Create New Schedule</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Schedule Name</mat-label>
+    <input matInput [(ngModel)]="scheduleName" />
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onCreate()" cdkFocusInitial>Create</button>
+</div>

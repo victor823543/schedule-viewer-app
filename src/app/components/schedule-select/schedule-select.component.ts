@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Observable } from 'rxjs';
 import { Entity, SchedulesResponse } from '../../models/schedule.model';
 import { SchedulesService } from '../../services/schedules.service';
+import { CreateScheduleDialogComponent } from '../create-schedule-dialog/create-schedule-dialog.component';
 
 @Component({
   selector: 'app-schedule-select',
@@ -63,7 +65,8 @@ export class ScheduleSelectComponent implements OnInit, OnDestroy {
 
   constructor(
     private schedulesService: SchedulesService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -93,6 +96,18 @@ export class ScheduleSelectComponent implements OnInit, OnDestroy {
     this.schedules$.subscribe((schedules) => {
       const selected = schedules.find((schedule) => schedule.id === scheduleId) || null;
       this.schedulesService.setSelectedSchedule(selected);
+    });
+  }
+
+  openCreateScheduleDialog(): void {
+    const dialogRef = this.dialog.open(CreateScheduleDialogComponent, {
+      width: '250px'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.schedulesService.createSchedule(result);
+      }
     });
   }
 }

@@ -84,4 +84,12 @@ export class SchedulesService implements OnDestroy {
     this.selectedScheduleSubject.next(schedule);
     this.storageService.setSessionItem('selectedSchedule', schedule);
   }
+
+  // Creates a new schedule.
+  public createSchedule(name: string): void {
+    this.http.post<{ id: string }>('/schedules', { name }).subscribe((response) => {
+      console.log('Created schedule:', response.id);
+      this.ensureSchedulesLoaded();
+    });
+  }
 }
