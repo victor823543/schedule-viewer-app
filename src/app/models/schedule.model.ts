@@ -39,3 +39,22 @@ export enum FilterOption {
   GROUP = 'group',
   LOCATION = 'location'
 }
+
+export type CreateEntityBody =
+  | {
+      category: 'teacher' | 'group' | 'location';
+      displayName: string;
+      schedule: string;
+    }
+  | {
+      category: 'course';
+      displayName: string;
+      subject: string;
+      schedule: string;
+    };
+
+export type DeleteEntitiesBody = {
+  ids: string[];
+  category: 'teacher' | 'group' | 'location' | 'course';
+  schedule: string;
+};

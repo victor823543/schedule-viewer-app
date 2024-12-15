@@ -92,4 +92,18 @@ export class SchedulesService implements OnDestroy {
       this.ensureSchedulesLoaded();
     });
   }
+
+  public refetchSelectedSchedule(): void {
+    const schedule = this.selectedScheduleSubject.getValue();
+    if (schedule) {
+      this.http
+        .get<ScheduleResponse>(`/schedules/${schedule.id}`)
+        .pipe(verifyResponse(ScheduleResponseSchema))
+        .subscribe((scheduleData) => {
+          console.log('Refetched schedule data:', scheduleData);
+          this.scheduleDataSubject.next(scheduleData);
+          this.filterService.clearEntityFilters();
+        });
+    }
+  }
 }
