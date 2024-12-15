@@ -1,0 +1,49 @@
+@use '@angular/material' as mat;
+
+.example-action-buttons {
+  padding-bottom: 20px;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: end;
+  align-items: center;
+}
+
+.example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
+  margin-left: 8px;
+}
+
+.container {
+  padding-top: 0.5rem;
+  max-height: 25rem;
+  display: flex;
+  flex-direction: column;
+
+  @include mat.button-overrides(
+    (
+      filled-container-color: rgb(var(--red)),
+      filled-container-shape: var(--border-radius)
+    )
+  );
+}
+
+.selection-list {
+  margin: 0.5rem 0;
+  padding-bottom: 0.5rem;
+  flex: 1;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-height: none;
+    height: calc(100vh - 208px - var(--toolbar-height) - 4.5rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container.center {
+    height: calc(100vh - 208px - var(--toolbar-height) - 5.5rem);
+  }
+}

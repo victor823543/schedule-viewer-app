@@ -1,0 +1,28 @@
+.toolbar {
+  border-radius: var(--border-radius);
+  justify-content: space-between;
+}
+
+.main-container {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.left-section {
+  width: 40%;
+  height: calc(100vh - var(--toolbar-height) - 2.5rem);
+}
+
+.right-section {
+  flex: 1;
+  border-radius: var(--border-radius);
+  background-color: rgb(var(--base-3x-light));
+  min-height: calc(100vh - var(--toolbar-height) - 2.5rem);
+}
+
+img {
+  display: block;
+  height: 100%;
+  padding: 0.5rem;
+}

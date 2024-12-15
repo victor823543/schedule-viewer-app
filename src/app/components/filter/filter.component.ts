@@ -85,7 +85,7 @@ export class FilterComponent implements OnInit {
     this.groups$ = this.searchService.filterEntities('groups', rawGroups$);
     this.locations$ = this.searchService.filterEntities('locations', rawLocations$);
 
-    // Configure filter panels
+    // Filter panel configuration
     this.filters = [
       {
         title: 'Teachers',

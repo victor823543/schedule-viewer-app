@@ -5,7 +5,15 @@ export const EntitySchema = z.object({
   displayName: z.string()
 });
 
+export const CourseSchema = z.object({
+  id: z.string(),
+  displayName: z.string(),
+  subject: z.string()
+});
+
 export type Entity = z.infer<typeof EntitySchema>;
+
+export type Course = z.infer<typeof CourseSchema>;
 
 export type Teacher = Entity;
 export type Group = Entity;
@@ -14,11 +22,10 @@ export type Location = Entity;
 export const ScheduleResponseSchema = z.object({
   id: z.string(),
   displayName: z.string(),
-  start: z.string(),
-  end: z.string(),
   teachers: z.array(EntitySchema),
   groups: z.array(EntitySchema),
-  locations: z.array(EntitySchema)
+  locations: z.array(EntitySchema),
+  courses: z.array(CourseSchema)
 });
 
 export type ScheduleResponse = z.infer<typeof ScheduleResponseSchema>;
