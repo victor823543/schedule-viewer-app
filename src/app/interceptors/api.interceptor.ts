@@ -3,7 +3,7 @@ import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-  const apiReq = req.clone({ url: `https://dev-backend.royalschedule.com${req.url}` });
+  const apiReq = req.clone({ url: `http://localhost:4000/api${req.url}` });
   return next(apiReq).pipe(
     catchError((err) => {
       console.error('HTTP Error:', err);

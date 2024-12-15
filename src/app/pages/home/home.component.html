@@ -1,0 +1,24 @@
+<!-- Side section only visible on screenwidth greater than 1024px -->
+<div class="side-section">
+  <app-filter class="filter-lg"></app-filter>
+</div>
+
+<div class="main-container">
+  <mat-toolbar class="toolbar toolbar-main toolbar-schedule">
+    <img src="rs-symbol.svg" alt="Logo" />
+    <app-date-picker [view]="selectedView()" class="date-lg"></app-date-picker>
+    <app-schedule-select></app-schedule-select>
+  </mat-toolbar>
+  <mat-toolbar class="toolbar toolbar-sm toolbar-date">
+    <app-date-picker [view]="selectedView()" class="date-sm"></app-date-picker>
+  </mat-toolbar>
+
+  <!-- Filter component for screenwidth smaller than 1024px -->
+  <app-filter class="filter-sm"></app-filter>
+
+  <!-- Filter chips component -->
+  <app-filter-chips *ngIf="hasFilter()"></app-filter-chips>
+
+  <!-- instantiates an instance of our calendar component and passes some input data -->
+  <app-calendar (viewChange)="setView($event)" [events]="events()"></app-calendar>
+</div>
