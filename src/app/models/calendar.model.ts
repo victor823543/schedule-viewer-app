@@ -37,6 +37,7 @@ export type CreateEventBody = {
   locations: string[];
   teachers: string[];
   groups: string[];
+  color: string;
 };
 
 export type CreateEventResponse = {

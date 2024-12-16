@@ -2,7 +2,10 @@
 
 <mat-dialog-content>
   <app-event-info-form (infoFormOutput)="onInfoSelected($event)"></app-event-info-form>
-  <app-event-time-form (timeSelected)="onTimeSelected($event)"></app-event-time-form>
+  <div class="right-container">
+    <app-event-time-form (timeSelected)="onTimeSelected($event)"></app-event-time-form>
+    <app-color-picker (colorSelected)="onColorSelected($event)"></app-color-picker>
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

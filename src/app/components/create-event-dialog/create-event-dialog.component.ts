@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CalendarService } from '../../services/calendar.service';
+import { ColorPickerComponent } from '../color-picker/color-picker.component';
 import { EventInfoFormComponent } from '../event-info-form/event-info-form.component';
 import { EventTimeFormComponent } from '../event-time-form/event-time-form.component';
 
@@ -14,7 +15,8 @@ import { EventTimeFormComponent } from '../event-time-form/event-time-form.compo
     MatDialogModule,
     MatButtonModule,
     EventTimeFormComponent,
-    EventInfoFormComponent
+    EventInfoFormComponent,
+    ColorPickerComponent
   ],
   templateUrl: './create-event-dialog.component.html',
   styleUrl: './create-event-dialog.component.scss'
@@ -27,6 +29,7 @@ export class CreateEventDialogComponent {
     locations: string[];
     courses: string[];
   } | null>(null);
+  eventColor = signal<string>('#818cf8');
 
   constructor(
     private dialogRef: MatDialogRef<CreateEventDialogComponent>,
@@ -46,6 +49,10 @@ export class CreateEventDialogComponent {
     this.eventInfo.set(info);
   }
 
+  onColorSelected(color: string) {
+    this.eventColor.set(color);
+  }
+
   isValid(): boolean {
     const time = this.eventTime();
     const info = this.eventInfo();
@@ -63,6 +70,7 @@ export class CreateEventDialogComponent {
 
     const time = this.eventTime()!;
     const info = this.eventInfo()!;
+    const color = this.eventColor();
 
     this.calendarService
       .createEvent({
@@ -73,7 +81,8 @@ export class CreateEventDialogComponent {
         groups: info.groups,
         locations: info.locations,
         course: info.courses[0] || undefined,
-        type: info.courses.length ? undefined : 'LUNCH'
+        type: info.courses.length ? undefined : 'LUNCH',
+        color
       })
       .subscribe({
         next: () => this.dialogRef.close(true),
