@@ -1,7 +1,7 @@
 import { Component, effect, input, output, viewChild } from '@angular/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
-import interactionPlugin from '@fullcalendar/interaction'; // Add this import
+import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { CalendarService } from '../../services/calendar.service';
 import { DateService } from '../../services/date.service';
@@ -33,7 +33,7 @@ export class CalendarComponent {
   // static calendar options
   protected readonly calendarOptions: CalendarOptions = {
     // the calendar view to be used
-    plugins: [timeGridPlugin, interactionPlugin], // Add interaction plugin here
+    plugins: [timeGridPlugin, interactionPlugin],
     initialView: 'timeGridWeek',
     initialDate: new Date(),
 
@@ -102,7 +102,6 @@ export class CalendarComponent {
     },
 
     headerToolbar: {
-      // left: 'prev,next',
       left: 'todayBtn',
       center: 'title',
       right: 'dayBtn,weekBtn'

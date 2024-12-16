@@ -9,16 +9,45 @@
     />
     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
+    <mat-error *ngIf="timeForm.get('date')?.errors?.['required']"> Date is required </mat-error>
   </mat-form-field>
 
   <mat-form-field>
     <mat-label>Start time</mat-label>
-    <input matInput type="time" [min]="minTime" [max]="maxTime" formControlName="startTime" />
+    <input
+      matInput
+      [matTimepicker]="timePicker"
+      [min]="minTime"
+      [max]="maxTime"
+      formControlName="startTime"
+      matTimepickerMin="07:00"
+      matTimepickerMax="17:30"
+    />
+    <mat-timepicker-toggle matIconSuffix [for]="timePicker" />
+    <mat-timepicker interval="15m" #timePicker></mat-timepicker>
+    <mat-error *ngIf="timeForm.get('startTime')?.errors?.['required']">
+      Start time is required
+    </mat-error>
+    <mat-error *ngIf="timeForm.get('startTime')?.errors?.['maxTime']">
+      Event must start before 17:30
+    </mat-error>
+    <mat-error *ngIf="timeForm.get('startTime')?.errors?.['minTime']">
+      Event must start after 7:00
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field>
     <mat-label>Duration (minutes)</mat-label>
     <input matInput type="number" formControlName="duration" min="5" max="660" />
+    <mat-error *ngIf="timeForm.get('duration')?.errors?.['required']">
+      Duration is required
+    </mat-error>
+    <mat-error *ngIf="timeForm.get('duration')?.errors?.['min']">
+      Event must be at least 15 minutes
+    </mat-error>
+    <mat-error *ngIf="timeForm.get('duration')?.errors?.['maxEndTime']">
+      Event cannot end after 18:00
+    </mat-error>
   </mat-form-field>
 
   <button mat-raised-button color="primary" type="submit" [disabled]="!timeForm.valid">

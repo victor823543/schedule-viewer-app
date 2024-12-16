@@ -1,5 +1,5 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
@@ -14,6 +14,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(withInterceptors([apiInterceptor])),
     provideAnimationsAsync(),
     provideNativeDateAdapter(),
-    provideRouter(routes)
+    provideRouter(routes),
+    { provide: MAT_DATE_LOCALE, useValue: 'sv-SE' }
   ]
 }).catch((err) => console.error(err));
