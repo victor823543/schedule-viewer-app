@@ -77,6 +77,29 @@ export class EventTimeFormComponent implements OnDestroy {
         }
       })
     );
+
+    // Add subscription to form value changes
+    this.startTimeSubscription.add(
+      this.timeForm.valueChanges.subscribe(() => {
+        const formValue = this.timeForm.value;
+        const date = new Date(formValue.date);
+        const startTimeValue = formValue.startTime;
+
+        const start = new Date(date);
+        const hours = startTimeValue.getHours();
+        const minutes = startTimeValue.getMinutes();
+        start.setHours(hours, minutes, 0, 0);
+
+        const end = new Date(start);
+        end.setMinutes(end.getMinutes() + formValue.duration);
+
+        this.timeSelected.emit({
+          start,
+          end,
+          duration: formValue.duration
+        });
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -133,26 +156,4 @@ export class EventTimeFormComponent implements OnDestroy {
     const day = date.getDay();
     return day !== 0 && day !== 6;
   };
-
-  onSubmit() {
-    if (this.timeForm.valid) {
-      const formValue = this.timeForm.value;
-      const date = new Date(formValue.date);
-      const startTimeValue = formValue.startTime;
-
-      const start = new Date(date);
-      const hours = startTimeValue.getHours();
-      const minutes = startTimeValue.getMinutes();
-      start.setHours(hours, minutes, 0, 0);
-
-      const end = new Date(start);
-      end.setMinutes(end.getMinutes() + formValue.duration);
-
-      this.timeSelected.emit({
-        start,
-        end,
-        duration: formValue.duration
-      });
-    }
-  }
 }

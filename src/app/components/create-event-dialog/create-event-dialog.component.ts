@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, ViewChild } from '@angular/core';
+import { Component, computed, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -36,6 +36,7 @@ export class CreateEventDialogComponent {
   } | null>(null);
   eventColor = signal<string>('#818cf8');
   isLunch = signal<boolean>(false);
+  disableSubmit = computed(() => !this.isValid());
 
   constructor(
     private dialogRef: MatDialogRef<CreateEventDialogComponent>,
@@ -68,14 +69,18 @@ export class CreateEventDialogComponent {
   }
 
   isValid(): boolean {
-    const time = this.eventTime();
     const info = this.eventInfo();
+    const timeIsValid = this.validateTime();
+    const isLunch = this.isLunch();
+    const haveCourses = info?.courses.length || false;
+    const hasEitherCourseOrLunch = isLunch || haveCourses;
     return !!(
-      time &&
+      timeIsValid &&
       info &&
       info.teachers.length > 0 &&
       info.groups.length > 0 &&
-      info.locations.length > 0
+      info.locations.length > 0 &&
+      hasEitherCourseOrLunch
     );
   }
 
@@ -102,5 +107,16 @@ export class CreateEventDialogComponent {
         next: () => this.dialogRef.close(true),
         error: (error) => console.error('Failed to create event:', error)
       });
+  }
+
+  private validateTime() {
+    const time = this.eventTime();
+    if (!time) return false;
+
+    const startHour = time.start.getHours();
+    const endHour = time.end.getHours();
+    const durationMinutes = (time.end.getTime() - time.start.getTime()) / 6000;
+
+    return startHour >= 7 && endHour <= 18 && durationMinutes >= 15;
   }
 }

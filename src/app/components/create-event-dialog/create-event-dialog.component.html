@@ -14,7 +14,7 @@
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="onSubmit()">
+  <button mat-flat-button color="primary" [disabled]="disableSubmit()" (click)="onSubmit()">
     Create Event
   </button>
 </mat-dialog-actions>
