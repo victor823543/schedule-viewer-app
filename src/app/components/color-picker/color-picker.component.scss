@@ -1,22 +1,38 @@
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .color-picker-btn {
-  border-radius: var(--border-radius);
-  width: 3rem;
-  height: 3rem;
+  border-radius: var(--border-radius-sm);
+  background-color: rgb(var(--base-x-light));
+  width: 4.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  span {
+    border-radius: var(--border-radius);
+    width: 1rem;
+    height: 1rem;
+  }
 }
 
 .colors-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
-  padding: 1rem;
-  margin: 1rem;
-  background-color: rgb(var(--base-2x-light));
+  padding: 0.75rem;
+  margin: 0 1rem 1rem;
+  background-color: rgb(var(--base-x-light));
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-lg);
 }
 
 .color {
   border-radius: var(--border-radius);
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }

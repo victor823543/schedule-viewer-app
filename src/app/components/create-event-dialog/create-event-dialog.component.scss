@@ -12,6 +12,15 @@ mat-dialog-actions {
   padding: 1rem;
 }
 
+mat-divider {
+  margin: 1.25rem 0;
+}
+
+.extra-options {
+  display: flex;
+  gap: 1rem;
+}
+
 @media (min-width: 768px) {
   mat-dialog-content {
     flex-direction: row;

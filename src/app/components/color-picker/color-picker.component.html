@@ -1,9 +1,11 @@
-<button
-  [matMenuTriggerFor]="menu"
-  class="color-picker-btn"
-  [style.background-color]="selectedColor()"
-></button>
-<mat-menu #menu="matMenu" yPosition="above">
+<div class="color-picker-container">
+  <button [matMenuTriggerFor]="menu" class="color-picker-btn">
+    <span [style.background-color]="selectedColor()"></span>
+    <mat-icon>keyboard_arrow_down</mat-icon>
+  </button>
+  <p>Pick Color</p>
+</div>
+<mat-menu #menu="matMenu" yPosition="below">
   <div class="colors-container">
     <button
       *ngFor="let color of colors"

@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, output, signal } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-color-picker',
-  imports: [MatMenuModule, CommonModule],
+  imports: [MatMenuModule, CommonModule, MatIconModule],
   templateUrl: './color-picker.component.html',
   styleUrl: './color-picker.component.scss'
 })

@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, output, signal } from '@angular/core';
+import { Component, OnInit, output, QueryList, signal, ViewChildren } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { MatListModule, MatSelectionListChange } from '@angular/material/list';
+import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { map, Observable } from 'rxjs';
 import { Entity, ScheduleResponse } from '../../models/schedule.model';
 import { SchedulesService } from '../../services/schedules.service';
@@ -43,6 +43,7 @@ type InfoFormOutput = {
   styleUrl: './event-info-form.component.scss'
 })
 export class EventInfoFormComponent implements OnInit {
+  @ViewChildren(MatSelectionList) selectionLists!: QueryList<MatSelectionList>;
   infoFormOutput = output<InfoFormOutput>();
 
   scheduleData$!: Observable<ScheduleResponse | null>;
@@ -150,5 +151,21 @@ export class EventInfoFormComponent implements OnInit {
       locations: this.selectedLocations(),
       courses: this.selectedCourses()
     });
+  }
+
+  clearCourses() {
+    const coursesList = this.selectionLists.find((list) =>
+      list._items.some((item) => this.selectedCourses().includes(item.value))
+    );
+    if (coursesList) {
+      coursesList.deselectAll();
+      this.selectedCourses.set([]);
+      this.infoFormOutput.emit({
+        teachers: this.selectedTeachers(),
+        groups: this.selectedGroups(),
+        locations: this.selectedLocations(),
+        courses: []
+      });
+    }
   }
 }

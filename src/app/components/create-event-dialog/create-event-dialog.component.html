@@ -4,7 +4,11 @@
   <app-event-info-form (infoFormOutput)="onInfoSelected($event)"></app-event-info-form>
   <div class="right-container">
     <app-event-time-form (timeSelected)="onTimeSelected($event)"></app-event-time-form>
-    <app-color-picker (colorSelected)="onColorSelected($event)"></app-color-picker>
+    <mat-divider></mat-divider>
+    <div class="extra-options">
+      <app-color-picker (colorSelected)="onColorSelected($event)"></app-color-picker>
+      <mat-checkbox [checked]="isLunch()" (change)="onIsLunchSelected($event)">Lunch?</mat-checkbox>
+    </div>
   </div>
 </mat-dialog-content>
 

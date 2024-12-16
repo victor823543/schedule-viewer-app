@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { CalendarService } from '../../services/calendar.service';
 import { ColorPickerComponent } from '../color-picker/color-picker.component';
 import { EventInfoFormComponent } from '../event-info-form/event-info-form.component';
@@ -16,12 +18,15 @@ import { EventTimeFormComponent } from '../event-time-form/event-time-form.compo
     MatButtonModule,
     EventTimeFormComponent,
     EventInfoFormComponent,
-    ColorPickerComponent
+    ColorPickerComponent,
+    MatCheckboxModule,
+    MatDividerModule
   ],
   templateUrl: './create-event-dialog.component.html',
   styleUrl: './create-event-dialog.component.scss'
 })
 export class CreateEventDialogComponent {
+  @ViewChild(EventInfoFormComponent) eventInfoForm!: EventInfoFormComponent;
   eventTime = signal<{ start: Date; end: Date; duration: number } | null>(null);
   eventInfo = signal<{
     teachers: string[];
@@ -30,6 +35,7 @@ export class CreateEventDialogComponent {
     courses: string[];
   } | null>(null);
   eventColor = signal<string>('#818cf8');
+  isLunch = signal<boolean>(false);
 
   constructor(
     private dialogRef: MatDialogRef<CreateEventDialogComponent>,
@@ -47,10 +53,18 @@ export class CreateEventDialogComponent {
     courses: string[];
   }) {
     this.eventInfo.set(info);
+    if (info.courses.length) this.isLunch.set(false);
   }
 
   onColorSelected(color: string) {
     this.eventColor.set(color);
+  }
+
+  onIsLunchSelected(event: MatCheckboxChange) {
+    this.isLunch.set(event.checked);
+    if (event.checked) {
+      this.eventInfoForm.clearCourses();
+    }
   }
 
   isValid(): boolean {

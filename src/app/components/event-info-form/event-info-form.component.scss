@@ -21,7 +21,7 @@
   overscroll-behavior: contain;
 }
 
-@media (min-width: 940px) {
+@media (min-width: 768px) {
   .container {
     max-height: none;
     height: calc(60vh - 208px);
