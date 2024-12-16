@@ -1,14 +1,15 @@
 import { z } from 'zod';
-import { EntitySchema } from './schedule.model';
+import { Entity, EntitySchema } from './schedule.model';
 
 export const EventsResponseSchema = z.array(
   z.object({
     id: z.string(),
     type: z.string().optional(),
-    course: z.object({ displayName: z.string() }).optional(),
-    teachers: z.array(z.object({ to: EntitySchema })),
-    groups: z.array(z.object({ to: EntitySchema })),
+    course: z.object({ displayName: z.string(), subject: z.string(), id: z.string() }).optional(),
+    teachers: z.array(EntitySchema),
+    groups: z.array(EntitySchema),
     inLocations: z.array(EntitySchema),
+    belongsTo: EntitySchema,
     start: z.string(),
     end: z.string(),
     color: z.string().optional()
@@ -35,4 +36,11 @@ export type CreateEventBody = {
   locations: string[];
   teachers: string[];
   groups: string[];
+};
+
+export type CreateEventResponse = {
+  week: string;
+  teacher: Entity;
+  group: Entity;
+  location: Entity;
 };

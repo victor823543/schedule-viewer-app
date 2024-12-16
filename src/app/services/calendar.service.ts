@@ -12,10 +12,17 @@ import {
   of,
   Subject,
   switchMap,
+  take,
   takeUntil,
+  tap,
   throwError
 } from 'rxjs';
-import { Event, EventsResponseSchema } from '../models/calendar.model';
+import {
+  CreateEventBody,
+  CreateEventResponse,
+  Event,
+  EventsResponseSchema
+} from '../models/calendar.model';
 import { verifyResponse } from '../utils/schema.validator';
 import { FilterService } from './filter.service';
 import { SchedulesService } from './schedules.service';
@@ -79,6 +86,51 @@ export class CalendarService implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  createEvent(event: CreateEventBody) {
+    if (!event.teachers.length || !event.groups.length || !event.locations.length) {
+      return throwError(() => new Error('Teachers, groups, and locations are required.'));
+    }
+
+    if (!event.start || !event.end) {
+      return throwError(() => new Error('Start and end are required.'));
+    }
+
+    if (!event.duration) {
+      return throwError(() => new Error('Duration is required.'));
+    }
+
+    if (!(event.course || event.type)) {
+      return throwError(() => new Error('Either course or type must be defined.'));
+    }
+
+    return combineLatest([this.schedulesService.selectedSchedule$]).pipe(
+      take(1),
+      switchMap(([selectedSchedule]) => {
+        if (!selectedSchedule) {
+          return throwError(() => new Error('No schedule selected'));
+        }
+        return this.http.post<CreateEventResponse>('/calendar_events', {
+          ...event,
+          belongsTo: selectedSchedule.id
+        });
+      }),
+      tap((response) => {
+        if (response.teacher) {
+          this.filterService.setTeacher(response.teacher);
+        }
+        if (response.group) {
+          this.filterService.setGroup(response.group);
+        }
+        if (response.location) {
+          this.filterService.setLocation(response.location);
+        }
+        if (response.week) {
+          this.filterService.setWeek(response.week);
+        }
+      })
+    );
   }
 
   private fetchEvents(

@@ -1,0 +1,20 @@
+:host {
+  display: block;
+}
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2rem;
+}
+
+mat-dialog-actions {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  mat-dialog-content {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}

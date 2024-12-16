@@ -1,0 +1,26 @@
+<div class="wrapper">
+  <mat-accordion class="accordion">
+    <mat-expansion-panel *ngFor="let item of items">
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ item.title }}</mat-panel-title>
+        <mat-panel-description>
+          <mat-icon>{{ item.icon }}</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="container" [ngClass]="item.cssClass">
+        <app-filter-search [label]="item.title" (search)="item.onSearch($event)">
+        </app-filter-search>
+        <mat-selection-list
+          [multiple]="true"
+          class="selection-list"
+          [ngClass]="item.cssClass"
+          (selectionChange)="onSelect($event, item.itemType)"
+        >
+          <mat-list-option *ngFor="let entity of item.data$ | async" [value]="entity.id">
+            {{ entity.displayName }}
+          </mat-list-option>
+        </mat-selection-list>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

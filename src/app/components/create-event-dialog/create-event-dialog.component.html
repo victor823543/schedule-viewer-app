@@ -1,1 +1,13 @@
-<p>create-event-dialog works!</p>
+<h2 mat-dialog-title>Create New Event</h2>
+
+<mat-dialog-content>
+  <app-event-info-form (infoFormOutput)="onInfoSelected($event)"></app-event-info-form>
+  <app-event-time-form (timeSelected)="onTimeSelected($event)"></app-event-time-form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="onSubmit()">
+    Create Event
+  </button>
+</mat-dialog-actions>

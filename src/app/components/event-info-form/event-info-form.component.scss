@@ -1,0 +1,35 @@
+.accordion .mat-mdc-form-field + .mat-mdc-form-field {
+  margin-left: 8px;
+}
+
+.wrapper {
+  height: 65vh;
+}
+
+.container {
+  padding-top: 0.5rem;
+  max-height: 25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.selection-list {
+  margin: 0.5rem 0;
+  padding-bottom: 0.5rem;
+  flex: 1;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 940px) {
+  .container {
+    max-height: none;
+    height: calc(60vh - 208px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container.center {
+    height: calc(60vh - 208px - 1rem);
+  }
+}

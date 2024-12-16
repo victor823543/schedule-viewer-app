@@ -1,0 +1,27 @@
+<form [formGroup]="timeForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Choose a date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [matDatepickerFilter]="dateFilter"
+      formControlName="date"
+    />
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Start time</mat-label>
+    <input matInput type="time" [min]="minTime" [max]="maxTime" formControlName="startTime" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Duration (minutes)</mat-label>
+    <input matInput type="number" formControlName="duration" min="5" max="660" />
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="!timeForm.valid">
+    Set Time
+  </button>
+</form>

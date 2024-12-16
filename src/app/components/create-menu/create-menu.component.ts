@@ -23,6 +23,10 @@ export class CreateMenuComponent {
   }
 
   openCreateEventDialog() {
-    this.dialog.open(CreateEventDialogComponent);
+    this.dialog.open(CreateEventDialogComponent, {
+      maxWidth: '100vw',
+      width: 'auto',
+      height: 'auto'
+    });
   }
 }
