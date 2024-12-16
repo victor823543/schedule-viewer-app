@@ -1,7 +1,9 @@
 import { Component, effect, input, output, viewChild } from '@angular/core';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
+import interactionPlugin from '@fullcalendar/interaction'; // Add this import
 import timeGridPlugin from '@fullcalendar/timegrid';
+import { CalendarService } from '../../services/calendar.service';
 import { DateService } from '../../services/date.service';
 
 export type CalendarEvent = {
@@ -9,6 +11,7 @@ export type CalendarEvent = {
   start: string;
   end: string;
   color?: string;
+  id: string;
 };
 
 @Component({
@@ -28,7 +31,7 @@ export class CalendarComponent {
   // static calendar options
   protected readonly calendarOptions: CalendarOptions = {
     // the calendar view to be used
-    plugins: [timeGridPlugin],
+    plugins: [timeGridPlugin, interactionPlugin], // Add interaction plugin here
     initialView: 'timeGridWeek',
     initialDate: new Date(),
 
@@ -51,6 +54,11 @@ export class CalendarComponent {
     eventStartEditable: true,
     eventDurationEditable: true,
     eventResizableFromStart: true,
+    droppable: true,
+
+    eventChange: (info) => {
+      this.calendarService.handleEventChange(info);
+    },
 
     customButtons: {
       weekBtn: {
@@ -115,7 +123,10 @@ export class CalendarComponent {
     }
   };
 
-  constructor(private dateService: DateService) {
+  constructor(
+    private dateService: DateService,
+    private calendarService: CalendarService
+  ) {
     // Set initial date from stored date
     this.calendarOptions.initialDate = new Date(this.dateService.selectedDay());
 

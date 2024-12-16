@@ -62,7 +62,8 @@ export class HomeComponent implements OnInit, OnDestroy {
             title: event.course?.displayName || event.type || '',
             start: event.start,
             end: event.end,
-            color: event.color
+            color: event.color,
+            id: event.id
           }))
         )
       )

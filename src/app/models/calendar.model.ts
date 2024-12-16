@@ -25,6 +25,7 @@ export type CalendarEvent = {
   start: string;
   end: string;
   color?: string;
+  id: string;
 };
 
 export type CreateEventBody = {

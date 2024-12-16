@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { EventChangeArg } from '@fullcalendar/core/index.js';
 import {
   BehaviorSubject,
   catchError,
@@ -131,6 +132,16 @@ export class CalendarService implements OnDestroy {
         }
       })
     );
+  }
+
+  handleEventChange(info: EventChangeArg) {
+    const params = {
+      start: info.event.start,
+      end: info.event.end,
+      duration: (info.event.end!.getTime() - info.event.start!.getTime()) / 60000
+    };
+
+    this.http.put(`/calendar_events/${info.event.id}`, params).subscribe();
   }
 
   private fetchEvents(
