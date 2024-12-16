@@ -20,8 +20,18 @@
   <app-filter-chips *ngIf="hasFilter()"></app-filter-chips>
 
   <!-- instantiates an instance of our calendar component and passes some input data -->
-  <app-calendar (viewChange)="setView($event)" [events]="events()"></app-calendar>
+  <app-calendar
+    (isDragging)="handleEventDrag($event)"
+    (eventDropped)="handleEventDrop($event)"
+    (viewChange)="setView($event)"
+    [events]="events()"
+  ></app-calendar>
 
   <!-- Create menu -->
   <app-create-menu></app-create-menu>
+
+  <!-- Delete button for event drag -->
+  <button *ngIf="isDeleteActive()" mat-fab class="delete-event-btn">
+    <mat-icon>delete</mat-icon>
+  </button>
 </div>

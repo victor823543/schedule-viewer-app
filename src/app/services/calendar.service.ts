@@ -25,6 +25,7 @@ import {
   EventsResponseSchema
 } from '../models/calendar.model';
 import { verifyResponse } from '../utils/schema.validator';
+import { DateService } from './date.service';
 import { FilterService } from './filter.service';
 import { SchedulesService } from './schedules.service';
 
@@ -47,7 +48,8 @@ export class CalendarService implements OnDestroy {
   constructor(
     private readonly http: HttpClient,
     private readonly filterService: FilterService,
-    private schedulesService: SchedulesService
+    private schedulesService: SchedulesService,
+    private dateService: DateService
   ) {
     // Convert signals to observables
     const teacher$ = toObservable(this.filterService.teacher);
@@ -129,6 +131,7 @@ export class CalendarService implements OnDestroy {
         }
         if (response.week) {
           this.filterService.setWeek(response.week);
+          this.dateService.setDate(response.week);
         }
       })
     );
@@ -161,5 +164,15 @@ export class CalendarService implements OnDestroy {
     }
 
     return this.http.get<Event[]>(`/schedules/${scheduleId}/calendar_events`, { params });
+  }
+
+  deleteEvent(eventId: string, removeFromCalendar?: (id: string) => void) {
+    return this.http.delete(`/calendar_events/${eventId}`).pipe(
+      tap(() => {
+        if (removeFromCalendar) {
+          removeFromCalendar(eventId);
+        }
+      })
+    );
   }
 }

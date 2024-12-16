@@ -24,6 +24,8 @@ export class CalendarComponent {
   // access the full calendar component
   private readonly _fullCalendar = viewChild(FullCalendarComponent);
   viewChange = output<'day' | 'week'>();
+  isDragging = output<null | string>();
+  eventDropped = output<{ eventId: string; x: number; y: number }>();
 
   // input parameters to be passed using the component's selector
   public readonly events = input.required<CalendarEvent[]>();
@@ -58,6 +60,19 @@ export class CalendarComponent {
 
     eventChange: (info) => {
       this.calendarService.handleEventChange(info);
+    },
+
+    eventDragStart: (info) => {
+      this.isDragging.emit(info.event.id);
+    },
+
+    eventDragStop: (info) => {
+      this.isDragging.emit(null);
+      this.eventDropped.emit({
+        eventId: info.event.id,
+        x: info.jsEvent.clientX,
+        y: info.jsEvent.clientY
+      });
     },
 
     customButtons: {
@@ -148,5 +163,10 @@ export class CalendarComponent {
     if (dayBtn) {
       dayBtn.classList.toggle('fc-button-active', activeView === 'timeGridDay');
     }
+  }
+
+  removeEvent(eventId: string) {
+    const event = this._fullCalendar()?.getApi().getEventById(eventId);
+    event?.remove();
   }
 }

@@ -1,3 +1,13 @@
+@use '@angular/material' as mat;
+
+.delete-event-btn {
+  @include mat.fab-overrides(
+    (
+      container-color: rgb(var(--red))
+    )
+  );
+}
+
 .main-container {
   display: flex;
   flex-direction: column;
@@ -28,6 +38,13 @@ img {
   display: block;
   height: 100%;
   padding: 0.5rem;
+}
+
+.delete-event-btn {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  color: rgb(var(--base-3x-light));
 }
 
 @media (min-width: 610px) {
