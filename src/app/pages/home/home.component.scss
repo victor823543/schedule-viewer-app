@@ -45,6 +45,7 @@ img {
   bottom: 1rem;
   right: 1rem;
   color: rgb(var(--base-3x-light));
+  z-index: 1000;
 }
 
 @media (min-width: 610px) {

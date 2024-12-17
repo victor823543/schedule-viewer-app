@@ -15,7 +15,7 @@ html {
       ),
       density: 0
     ),
-    $overrides: (surface: rgb(var(--base-3x-light)))
+    $overrides: (surface: rgb(var(--base-3x-light)), primary: rgb(var(--primary)))
   );
 }
 

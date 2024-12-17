@@ -1,3 +1,13 @@
+@use '@angular/material' as mat;
+
+.menu-btn {
+  @include mat.fab-overrides(
+    (
+      container-color: rgb(var(--primary-2x-light))
+    )
+  );
+}
+
 .menu-btn {
   position: fixed;
   bottom: 0.5rem;
@@ -10,7 +20,7 @@
   margin-bottom: 0.5rem;
   padding: 1rem 2rem;
   border-radius: 0.5rem;
-  background-color: rgba(var(--base-3x-light), 0.75);
+  background-color: rgb(var(--primary-2x-light));
   text-align: center;
   box-shadow: var(--shadow-lg);
   transition: background-color 0.2s;
@@ -19,6 +29,6 @@
   color: rgb(var(--base-dark));
 
   &:hover {
-    background-color: rgba(var(--base-2x-light), 0.5);
+    background-color: rgb(var(--primary-x-light));
   }
 }

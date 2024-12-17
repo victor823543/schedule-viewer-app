@@ -59,7 +59,7 @@ export class CalendarComponent {
     droppable: true,
 
     eventChange: (info) => {
-      this.calendarService.handleEventChange(info);
+      this.calendarService.handleEventChange(info).subscribe();
     },
 
     eventDragStart: (info) => {

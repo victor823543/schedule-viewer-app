@@ -24,9 +24,10 @@ import {
   Event,
   EventsResponseSchema
 } from '../models/calendar.model';
+import { Entity } from '../models/schedule.model';
 import { verifyResponse } from '../utils/schema.validator';
 import { DateService } from './date.service';
-import { FilterService } from './filter.service';
+import { FilterService, FilterState } from './filter.service';
 import { SchedulesService } from './schedules.service';
 
 type FilterResult = {
@@ -41,34 +42,46 @@ type FilterResult = {
   providedIn: 'root'
 })
 export class CalendarService implements OnDestroy {
+  private readonly API_ENDPOINTS = {
+    CALENDAR_EVENTS: '/calendar_events',
+    SCHEDULE_EVENTS: (scheduleId: string) => `/schedules/${scheduleId}/calendar_events`
+  } as const;
+
   private readonly destroy$ = new Subject<void>();
-  private calendarEventsSubject = new BehaviorSubject<Event[]>([]);
-  public calendarEvents$: Observable<Event[]> = this.calendarEventsSubject.asObservable();
+  private readonly calendarEventsSubject = new BehaviorSubject<Event[]>([]);
+  public readonly calendarEvents$: Observable<Event[]> = this.calendarEventsSubject.asObservable();
 
   constructor(
     private readonly http: HttpClient,
     private readonly filterService: FilterService,
-    private schedulesService: SchedulesService,
-    private dateService: DateService
+    private readonly schedulesService: SchedulesService,
+    private readonly dateService: DateService
   ) {
-    // Convert signals to observables
-    const teacher$ = toObservable(this.filterService.teacher);
-    const group$ = toObservable(this.filterService.group);
-    const location$ = toObservable(this.filterService.location);
-    const week$ = toObservable(this.filterService.week);
+    this.initializeEventSubscription();
+  }
 
-    combineLatest([this.schedulesService.selectedSchedule$, teacher$, group$, location$, week$])
+  /**
+   * Initialize the subscription for calendar events based on filters
+   */
+  private initializeEventSubscription(): void {
+    const observables = {
+      teacher: toObservable(this.filterService.teacher),
+      group: toObservable(this.filterService.group),
+      location: toObservable(this.filterService.location),
+      week: toObservable(this.filterService.week)
+    };
+
+    combineLatest([
+      this.schedulesService.selectedSchedule$,
+      observables.week,
+      observables.teacher,
+      observables.group,
+      observables.location
+    ])
       .pipe(
         takeUntil(this.destroy$),
         debounceTime(300),
-        map(([selectedSchedule, teacher, group, location, week]) => {
-          const hasActiveFilters = teacher.active || group.active || location.active;
-          if (!hasActiveFilters) {
-            this.calendarEventsSubject.next([]);
-            return null;
-          }
-          return { selectedSchedule, week };
-        }),
+        map(this.processFilters.bind(this)),
         filter(
           (result): result is FilterResult =>
             result !== null && result.selectedSchedule !== null && result.week !== null
@@ -86,71 +99,90 @@ export class CalendarService implements OnDestroy {
       .subscribe((events) => this.calendarEventsSubject.next(events));
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+  /**
+   * Process and validate event creation request
+   */
+  createEvent(event: CreateEventBody): Observable<CreateEventResponse> {
+    this.validateEventData(event);
 
-  createEvent(event: CreateEventBody) {
-    if (!event.teachers.length || !event.groups.length || !event.locations.length) {
-      return throwError(() => new Error('Teachers, groups, and locations are required.'));
-    }
-
-    if (!event.start || !event.end) {
-      return throwError(() => new Error('Start and end are required.'));
-    }
-
-    if (!event.duration) {
-      return throwError(() => new Error('Duration is required.'));
-    }
-
-    if (!(event.course || event.type)) {
-      return throwError(() => new Error('Either course or type must be defined.'));
-    }
-
-    return combineLatest([this.schedulesService.selectedSchedule$]).pipe(
+    return this.schedulesService.selectedSchedule$.pipe(
       take(1),
-      switchMap(([selectedSchedule]) => {
+      switchMap((selectedSchedule) => {
         if (!selectedSchedule) {
           return throwError(() => new Error('No schedule selected'));
         }
-        return this.http.post<CreateEventResponse>('/calendar_events', {
+        return this.http.post<CreateEventResponse>(this.API_ENDPOINTS.CALENDAR_EVENTS, {
           ...event,
           belongsTo: selectedSchedule.id
         });
       }),
-      tap((response) => {
-        if (response.teacher) {
-          this.filterService.setTeacher(response.teacher);
-        }
-        if (response.group) {
-          this.filterService.setGroup(response.group);
-        }
-        if (response.location) {
-          this.filterService.setLocation(response.location);
-        }
-        if (response.week) {
-          this.filterService.setWeek(response.week);
-          this.dateService.setDate(response.week);
-        }
-      })
+      tap(this.updateFiltersFromResponse.bind(this))
     );
   }
 
-  handleEventChange(info: EventChangeArg) {
+  /**
+   * Handle calendar event updates
+   */
+  handleEventChange(info: EventChangeArg): Observable<void> {
     const params = {
       start: info.event.start,
       end: info.event.end,
-      duration: (info.event.end!.getTime() - info.event.start!.getTime()) / 60000
+      duration: this.calculateDuration(info.event.start!, info.event.end!)
     };
 
-    this.http.put(`/calendar_events/${info.event.id}`, params).subscribe();
+    return this.http.put<void>(`${this.API_ENDPOINTS.CALENDAR_EVENTS}/${info.event.id}`, params);
+  }
+
+  deleteEvent(eventId: string, removeFromCalendar?: (id: string) => void): Observable<void> {
+    return this.http
+      .delete<void>(`${this.API_ENDPOINTS.CALENDAR_EVENTS}/${eventId}`)
+      .pipe(tap(() => removeFromCalendar?.(eventId)));
+  }
+
+  // Helper methods
+  private validateEventData(event: CreateEventBody): void {
+    if (!event.teachers.length || !event.groups.length || !event.locations.length) {
+      throw new Error('Teachers, groups, and locations are required.');
+    }
+    if (!event.start || !event.end || !event.duration) {
+      throw new Error('Start, end, and duration are required.');
+    }
+    if (!(event.course || event.type)) {
+      throw new Error('Either course or type must be defined.');
+    }
+  }
+
+  private calculateDuration(start: Date, end: Date): number {
+    return (end.getTime() - start.getTime()) / 60000;
+  }
+
+  private updateFiltersFromResponse(response: CreateEventResponse): void {
+    if (response.teacher) this.filterService.setTeacher(response.teacher);
+    if (response.group) this.filterService.setGroup(response.group);
+    if (response.location) this.filterService.setLocation(response.location);
+    if (response.week) {
+      this.filterService.setWeek(response.week);
+      this.dateService.setDate(response.week);
+    }
+  }
+
+  private processFilters([selectedSchedule, week, teacher, group, location]: [
+    Entity | null,
+    string | null,
+    ...FilterState[]
+  ]): FilterResult | null {
+    const hasActiveFilters = teacher.active || group.active || location.active;
+    if (!hasActiveFilters) {
+      this.calendarEventsSubject.next([]);
+      return null;
+    }
+    return { selectedSchedule, week };
   }
 
   private fetchEvents(
     filters: { [key: string]: string | null },
     scheduleId: string
-  ): Observable<any[]> {
+  ): Observable<Event[]> {
     let params = new HttpParams();
 
     Object.entries(filters).forEach(([key, value]) => {
@@ -163,16 +195,11 @@ export class CalendarService implements OnDestroy {
       return throwError(() => new Error('Week parameter is required.'));
     }
 
-    return this.http.get<Event[]>(`/schedules/${scheduleId}/calendar_events`, { params });
+    return this.http.get<Event[]>(this.API_ENDPOINTS.SCHEDULE_EVENTS(scheduleId), { params });
   }
 
-  deleteEvent(eventId: string, removeFromCalendar?: (id: string) => void) {
-    return this.http.delete(`/calendar_events/${eventId}`).pipe(
-      tap(() => {
-        if (removeFromCalendar) {
-          removeFromCalendar(eventId);
-        }
-      })
-    );
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
