@@ -12,13 +12,14 @@ import { SchedulesService } from '../../services/schedules.service';
 import { SearchService } from '../../services/search.service';
 import { FilterSearchComponent } from '../search/search.component';
 
-// Configuration type for filter panels
+type EntityType = 'teacher' | 'group' | 'location' | 'course';
+
 type ItemsConfig = {
   title: string;
   icon: string;
   data$: Observable<Entity[]>;
   onSearch: (term: string) => void;
-  itemType: 'teacher' | 'group' | 'location' | 'course';
+  itemType: EntityType;
   cssClass?: string;
 };
 
@@ -39,12 +40,14 @@ type ItemsConfig = {
   styleUrl: './entity-section.component.scss'
 })
 export class EntitySectionComponent implements OnInit {
-  scheduleData$!: Observable<ScheduleResponse | null>;
-  teachers$!: Observable<Entity[]>;
-  groups$!: Observable<Entity[]>;
-  locations$!: Observable<Entity[]>;
-  courses$!: Observable<Entity[]>;
+  private readonly PANEL_CONFIGS: Record<EntityType, { title: string; icon: string }> = {
+    teacher: { title: 'Teachers', icon: 'face' },
+    group: { title: 'Groups', icon: 'groups' },
+    location: { title: 'Locations', icon: 'location_on' },
+    course: { title: 'Courses', icon: 'home' }
+  };
 
+  scheduleData$!: Observable<ScheduleResponse | null>;
   items!: ItemsConfig[];
 
   selectedTeachers = signal<string[]>([]);
@@ -52,145 +55,102 @@ export class EntitySectionComponent implements OnInit {
   selectedLocations = signal<string[]>([]);
   selectedCourses = signal<string[]>([]);
 
+  private entityStreams: Record<EntityType, Observable<Entity[]>> = {} as Record<
+    EntityType,
+    Observable<Entity[]>
+  >;
+
   constructor(
-    private schedulesService: SchedulesService,
-    private searchService: SearchService,
-    private entityService: EntityService
+    private readonly schedulesService: SchedulesService,
+    private readonly searchService: SearchService,
+    private readonly entityService: EntityService
   ) {}
 
   ngOnInit(): void {
     this.scheduleData$ = this.schedulesService.scheduleData$;
+    this.initializeEntityStreams();
+    this.initializeItems();
+  }
 
-    // Extract raw entities from schedule data
-    const rawTeachers$ = this.scheduleData$.pipe(map((schedule) => schedule?.teachers || []));
-    const rawGroups$ = this.scheduleData$.pipe(map((schedule) => schedule?.groups || []));
-    const rawLocations$ = this.scheduleData$.pipe(map((schedule) => schedule?.locations || []));
-    const rawCourses$ = this.scheduleData$.pipe(
-      map(
-        (schedule) =>
-          schedule?.courses.map((c) => ({
-            id: c.id,
-            displayName: c.displayName
-          })) || []
+  /**
+   * Initialize entity data streams with search filtering
+   */
+  private initializeEntityStreams(): void {
+    const rawData = {
+      teacher: this.scheduleData$.pipe(map((schedule) => schedule?.teachers || [])),
+      group: this.scheduleData$.pipe(map((schedule) => schedule?.groups || [])),
+      location: this.scheduleData$.pipe(map((schedule) => schedule?.locations || [])),
+      course: this.scheduleData$.pipe(
+        map(
+          (schedule) =>
+            schedule?.courses.map((c) => ({
+              id: c.id,
+              displayName: c.displayName
+            })) || []
+        )
       )
-    );
+    };
 
-    // Apply search filtering to raw entities
-    this.teachers$ = this.searchService.filterEntities('teachers', rawTeachers$);
-    this.groups$ = this.searchService.filterEntities('groups', rawGroups$);
-    this.locations$ = this.searchService.filterEntities('locations', rawLocations$);
-    this.courses$ = this.searchService.filterEntities('courses', rawCourses$);
-
-    this.items = [
-      {
-        title: 'Teachers',
-        itemType: 'teacher',
-        icon: 'face',
-        data$: this.teachers$,
-        onSearch: (term: string) => this.searchService.setSearchTerm('teachers', term)
-      },
-      {
-        title: 'Groups',
-        itemType: 'group',
-        icon: 'groups',
-        data$: this.groups$,
-        onSearch: (term: string) => this.searchService.setSearchTerm('groups', term),
-        cssClass: 'center'
-      },
-      {
-        title: 'Locations',
-        itemType: 'location',
-        icon: 'location_on',
-        data$: this.locations$,
-        onSearch: (term: string) => this.searchService.setSearchTerm('locations', term),
-        cssClass: 'center'
-      },
-      {
-        title: 'Courses',
-        itemType: 'course',
-        icon: 'home',
-        data$: this.courses$,
-        onSearch: (term: string) => this.searchService.setSearchTerm('courses', term)
-      }
-    ];
+    // Apply search filtering to each entity type
+    Object.entries(rawData).forEach(([type, stream]) => {
+      this.entityStreams[type as EntityType] = this.searchService.filterEntities(type, stream);
+    });
   }
 
-  onSelect(event: MatSelectionListChange, type: 'teacher' | 'group' | 'location' | 'course') {
-    switch (type) {
-      case 'teacher':
-        this.selectedTeachers.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value)
-        );
-        break;
-      case 'group':
-        this.selectedGroups.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value)
-        );
-        break;
-      case 'location':
-        this.selectedLocations.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value)
-        );
-        break;
-      case 'course':
-        this.selectedCourses.set(
-          event.source.selectedOptions.selected.map((selected) => selected.value)
-        );
-        break;
-    }
+  /**
+   * Initialize panel configurations
+   */
+  private initializeItems(): void {
+    this.items = Object.entries(this.PANEL_CONFIGS).map(([type, config]) => ({
+      ...config,
+      itemType: type as EntityType,
+      data$: this.entityStreams[type as EntityType],
+      onSearch: (term: string) => this.searchService.setSearchTerm(type, term),
+      cssClass: type === 'group' || type === 'location' ? 'center' : undefined
+    }));
   }
 
-  onDelete(type: 'teacher' | 'group' | 'location' | 'course') {
-    switch (type) {
-      case 'teacher':
-        console.log('Deleting teacher', this.selectedTeachers());
-        this.entityService
-          .deleteEntities({
-            ids: this.selectedTeachers(),
-            type: 'teacher'
-          })
-          .subscribe();
-        break;
-      case 'group':
-        console.log('Deleting group', this.selectedGroups());
-        this.entityService
-          .deleteEntities({
-            ids: this.selectedGroups(),
-            type: 'group'
-          })
-          .subscribe();
-        break;
-      case 'location':
-        console.log('Deleting location', this.selectedLocations());
-        this.entityService
-          .deleteEntities({
-            ids: this.selectedLocations(),
-            type: 'location'
-          })
-          .subscribe();
-        break;
-      case 'course':
-        console.log('Deleting course', this.selectedCourses());
-        this.entityService
-          .deleteEntities({
-            ids: this.selectedCourses(),
-            type: 'course'
-          })
-          .subscribe();
-        break;
-    }
+  /**
+   * Handle selection changes for any entity type
+   */
+  onSelect(event: MatSelectionListChange, type: EntityType): void {
+    const selectedValues = event.source.selectedOptions.selected.map((selected) => selected.value);
+    const selectionMap: Record<EntityType, (values: string[]) => void> = {
+      teacher: this.selectedTeachers.set,
+      group: this.selectedGroups.set,
+      location: this.selectedLocations.set,
+      course: this.selectedCourses.set
+    };
+
+    selectionMap[type](selectedValues);
   }
 
-  hasSelectedItems(type: 'teacher' | 'group' | 'location' | 'course'): boolean {
-    switch (type) {
-      case 'teacher':
-        return this.selectedTeachers().length > 0;
-      case 'group':
-        return this.selectedGroups().length > 0;
-      case 'location':
-        return this.selectedLocations().length > 0;
-      case 'course':
-        return this.selectedCourses().length > 0;
-    }
+  /**
+   * Handle deletion of selected entities
+   */
+  onDelete(type: EntityType): void {
+    const selectionMap: Record<EntityType, () => string[]> = {
+      teacher: () => this.selectedTeachers(),
+      group: () => this.selectedGroups(),
+      location: () => this.selectedLocations(),
+      course: () => this.selectedCourses()
+    };
+
+    const selectedIds = selectionMap[type]();
+    this.entityService.deleteEntities({ ids: selectedIds, type }).subscribe();
+  }
+
+  /**
+   * Check if there are selected items for a given entity type
+   */
+  hasSelectedItems(type: EntityType): boolean {
+    const selectionMap: Record<EntityType, () => string[]> = {
+      teacher: () => this.selectedTeachers(),
+      group: () => this.selectedGroups(),
+      location: () => this.selectedLocations(),
+      course: () => this.selectedCourses()
+    };
+
+    return selectionMap[type]().length > 0;
   }
 }

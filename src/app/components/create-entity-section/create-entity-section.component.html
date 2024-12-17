@@ -1,18 +1,18 @@
 <mat-tab-group>
   <mat-tab label="Teacher">
-    <form [formGroup]="teacherForm" (ngSubmit)="onSubmit('teacher')" class="form-container">
+    <form [formGroup]="forms.teacher" (ngSubmit)="onSubmit('teacher')" class="form-container">
       <mat-form-field>
         <mat-label>Name</mat-label>
         <input matInput formControlName="displayName" />
-        <mat-error *ngIf="teacherForm.get('displayName')?.invalid">
-          {{ getErrorMessage(teacherForm, 'displayName') }}
+        <mat-error *ngIf="forms.teacher.get('displayName')?.invalid">
+          {{ getErrorMessage(forms.teacher, 'displayName') }}
         </mat-error>
       </mat-form-field>
       <button
         mat-flat-button
         color="primary"
         type="submit"
-        [disabled]="teacherForm.invalid || isSubmitting"
+        [disabled]="forms.teacher.invalid || isSubmitting"
       >
         Create Teacher
       </button>
@@ -20,19 +20,19 @@
   </mat-tab>
 
   <mat-tab label="Group">
-    <form [formGroup]="groupForm" (ngSubmit)="onSubmit('group')" class="form-container">
+    <form [formGroup]="forms.group" (ngSubmit)="onSubmit('group')" class="form-container">
       <mat-form-field>
         <mat-label>Name</mat-label>
         <input matInput formControlName="displayName" />
-        <mat-error *ngIf="groupForm.get('displayName')?.invalid">
-          {{ getErrorMessage(groupForm, 'displayName') }}
+        <mat-error *ngIf="forms.group.get('displayName')?.invalid">
+          {{ getErrorMessage(forms.group, 'displayName') }}
         </mat-error>
       </mat-form-field>
       <button
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="groupForm.invalid || isSubmitting"
+        [disabled]="forms.group.invalid || isSubmitting"
       >
         Create Group
       </button>
@@ -40,19 +40,19 @@
   </mat-tab>
 
   <mat-tab label="Location">
-    <form [formGroup]="locationForm" (ngSubmit)="onSubmit('location')" class="form-container">
+    <form [formGroup]="forms.location" (ngSubmit)="onSubmit('location')" class="form-container">
       <mat-form-field>
         <mat-label>Name</mat-label>
         <input matInput formControlName="displayName" />
-        <mat-error *ngIf="locationForm.get('displayName')?.invalid">
-          {{ getErrorMessage(locationForm, 'displayName') }}
+        <mat-error *ngIf="forms.location.get('displayName')?.invalid">
+          {{ getErrorMessage(forms.location, 'displayName') }}
         </mat-error>
       </mat-form-field>
       <button
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="locationForm.invalid || isSubmitting"
+        [disabled]="forms.location.invalid || isSubmitting"
       >
         Create Location
       </button>
@@ -60,26 +60,26 @@
   </mat-tab>
 
   <mat-tab label="Course">
-    <form [formGroup]="courseForm" (ngSubmit)="onSubmit('course')" class="form-container">
+    <form [formGroup]="forms.course" (ngSubmit)="onSubmit('course')" class="form-container">
       <mat-form-field>
         <mat-label>Name</mat-label>
         <input matInput formControlName="displayName" />
-        <mat-error *ngIf="courseForm.get('displayName')?.invalid">
-          {{ getErrorMessage(courseForm, 'displayName') }}
+        <mat-error *ngIf="forms.course.get('displayName')?.invalid">
+          {{ getErrorMessage(forms.course, 'displayName') }}
         </mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Subject</mat-label>
         <input matInput formControlName="subject" />
-        <mat-error *ngIf="courseForm.get('subject')?.invalid">
-          {{ getErrorMessage(courseForm, 'subject') }}
+        <mat-error *ngIf="forms.course.get('subject')?.invalid">
+          {{ getErrorMessage(forms.course, 'subject') }}
         </mat-error>
       </mat-form-field>
       <button
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="courseForm.invalid || isSubmitting"
+        [disabled]="forms.course.invalid || isSubmitting"
       >
         Create Course
       </button>

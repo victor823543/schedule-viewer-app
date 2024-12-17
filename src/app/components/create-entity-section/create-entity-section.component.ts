@@ -9,6 +9,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { lastValueFrom } from 'rxjs';
 import { EntityService } from '../../services/entity.service';
 
+type EntityType = 'teacher' | 'group' | 'location' | 'course';
+
 @Component({
   selector: 'app-create-entity-section',
   imports: [
@@ -23,55 +25,54 @@ import { EntityService } from '../../services/entity.service';
   styleUrl: './create-entity-section.component.scss'
 })
 export class CreateEntitySectionComponent {
-  teacherForm: FormGroup;
-  groupForm: FormGroup;
-  locationForm: FormGroup;
-  courseForm: FormGroup;
+  private readonly FORM_CONFIG = {
+    displayName: ['', [Validators.required, Validators.minLength(2)]],
+    subject: ['', Validators.required]
+  };
+
+  readonly forms: Record<EntityType, FormGroup>;
   isSubmitting = false;
 
   constructor(
-    private fb: FormBuilder,
-    private entityService: EntityService,
-    private snackBar: MatSnackBar
+    private readonly fb: FormBuilder,
+    private readonly entityService: EntityService,
+    private readonly snackBar: MatSnackBar
   ) {
-    this.teacherForm = this.fb.group({
-      displayName: ['', [Validators.required, Validators.minLength(2)]]
-    });
+    // Move forms initialization to constructor
+    this.forms = {
+      teacher: this.createBasicForm(),
+      group: this.createBasicForm(),
+      location: this.createBasicForm(),
+      course: this.createCourseForm()
+    };
+  }
 
-    this.groupForm = this.fb.group({
-      displayName: ['', [Validators.required, Validators.minLength(2)]]
-    });
-
-    this.locationForm = this.fb.group({
-      displayName: ['', [Validators.required, Validators.minLength(2)]]
-    });
-
-    this.courseForm = this.fb.group({
-      displayName: ['', [Validators.required, Validators.minLength(2)]],
-      subject: ['', Validators.required]
+  /**
+   * Creates a basic form with displayName field
+   */
+  private createBasicForm(): FormGroup {
+    return this.fb.group({
+      displayName: this.FORM_CONFIG.displayName
     });
   }
 
-  async onSubmit(type: 'teacher' | 'group' | 'location' | 'course') {
-    let form: FormGroup;
-    switch (type) {
-      case 'teacher':
-        form = this.teacherForm;
-        break;
-      case 'group':
-        form = this.groupForm;
-        break;
-      case 'location':
-        form = this.locationForm;
-        break;
-      case 'course':
-        form = this.courseForm;
-        break;
-    }
+  /**
+   * Creates a course form with additional subject field
+   */
+  private createCourseForm(): FormGroup {
+    return this.fb.group({
+      displayName: this.FORM_CONFIG.displayName,
+      subject: this.FORM_CONFIG.subject
+    });
+  }
 
-    if (form.invalid) {
-      return;
-    }
+  /**
+   * Handles form submission for any entity type
+   */
+  async onSubmit(type: EntityType): Promise<void> {
+    const form = this.forms[type];
+
+    if (form.invalid) return;
 
     this.isSubmitting = true;
     try {
@@ -84,27 +85,30 @@ export class CreateEntitySectionComponent {
       );
 
       form.reset();
-
-      this.snackBar.open(
-        `${type.charAt(0).toUpperCase() + type.slice(1)} created successfully`,
-        'Close',
-        { duration: 3000 }
-      );
+      this.showSuccessMessage(type);
     } catch (error) {
-      this.snackBar.open('Error creating entity', 'Close', { duration: 3000 });
+      this.showErrorMessage();
     } finally {
       this.isSubmitting = false;
     }
   }
 
+  /**
+   * Gets error message for form field
+   */
   getErrorMessage(form: FormGroup, field: string): string {
     const control = form.get(field);
-    if (control?.hasError('required')) {
-      return 'This field is required';
-    }
-    if (control?.hasError('minlength')) {
-      return 'Minimum length is 2 characters';
-    }
+    if (control?.hasError('required')) return 'This field is required';
+    if (control?.hasError('minlength')) return 'Minimum length is 2 characters';
     return '';
+  }
+
+  private showSuccessMessage(type: EntityType): void {
+    const entityName = type.charAt(0).toUpperCase() + type.slice(1);
+    this.snackBar.open(`${entityName} created successfully`, 'Close', { duration: 3000 });
+  }
+
+  private showErrorMessage(): void {
+    this.snackBar.open('Error creating entity', 'Close', { duration: 3000 });
   }
 }

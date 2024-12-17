@@ -7,7 +7,12 @@
       </mat-panel-description>
     </mat-expansion-panel-header>
     <div class="container" [ngClass]="item.cssClass">
-      <app-filter-search [label]="item.title" (search)="item.onSearch($event)"> </app-filter-search>
+      <app-filter-search
+        [label]="item.title"
+        (search)="item.onSearch($event)"
+        [attr.data-type]="item.itemType"
+      >
+      </app-filter-search>
       <button
         mat-flat-button
         [disabled]="!hasSelectedItems(item.itemType)"
